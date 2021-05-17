@@ -1,7 +1,26 @@
+import { Box, Flex } from '@chakra-ui/layout'
 import Head from 'next/head'
+import BoardSheet from '../components/board/BoardSheet'
+import { Sheet } from '../models/Sheet'
 import styles from '../styles/Board.module.css'
 
 export default function Board() {
+  const sheets: Sheet[] = [
+    {
+      id: 1,
+      name: 'test',
+      tasks: [
+        { id: 1, body: 'aiueo' },
+        { id: 2, body: 'bbbbb' },
+      ],
+    },
+    {
+      id: 2,
+      name: 'test2',
+      tasks: [{ id: 3, body: 'aiueo' }],
+    },
+  ]
+
   return (
     <>
       <Head>
@@ -10,7 +29,13 @@ export default function Board() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}></main>
+      <Box as="main" className={styles.main} backgroundColor="blue.100">
+        <Flex p={4}>
+          {sheets.map((sheet) => (
+            <BoardSheet key={sheet.id} sheet={sheet} />
+          ))}
+        </Flex>
+      </Box>
     </>
   )
 }
