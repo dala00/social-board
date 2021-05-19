@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-
 import {
   Announcements,
   closestCenter,
@@ -29,6 +28,12 @@ import {
   AnimateLayoutChanges,
 } from '@dnd-kit/sortable'
 import { Item } from './Item'
+import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
+
+export type ItemBuilder = (
+  index: number,
+  listeners: SyntheticListenerMap
+) => JSX.Element
 
 export interface Props {
   activationConstraint?: PointerActivationConstraint
@@ -60,7 +65,7 @@ export interface Props {
     id: string
   }): React.CSSProperties
   isDisabled?(id: UniqueIdentifier): boolean
-  itemBuilder: (index: number) => JSX.Element
+  itemBuilder: ItemBuilder
   onDragEnd: (activeIndex: number, newIndex: number) => void
 }
 
@@ -241,7 +246,16 @@ interface SortableItemProps {
     isDragging: boolean
     id: string
   }): React.CSSProperties
-  itemBuilder: (index: number) => JSX.Element
+  itemBuilder: ItemBuilder
+}
+
+function getItemAttributes(originalAttributes: any, handle: boolean): object {
+  if (!handle) {
+    return originalAttributes
+  }
+
+  const { role, ...attributes } = originalAttributes
+  return attributes
 }
 
 export function SortableItem({
@@ -298,7 +312,7 @@ export function SortableItem({
       data-id={id}
       dragOverlay={!useDragOverlay && isDragging}
       itemBuilder={itemBuilder}
-      {...attributes}
+      {...getItemAttributes(attributes, handle)}
     />
   )
 }

@@ -45,16 +45,23 @@ export default function Board() {
         <Flex as={'ul'} p={4}>
           <Sortable
             items={sheets.map((sheet) => sheet.id.toString())}
-            itemBuilder={(index) => {
+            itemBuilder={(index, listeners) => {
               if (index === undefined) {
                 return <></>
               }
               const sheet = sheets[index]
-              return <BoardSheet key={sheet.id.toString()} sheet={sheet} />
+              return (
+                <BoardSheet
+                  key={sheet.id.toString()}
+                  sheet={sheet}
+                  listeners={listeners}
+                />
+              )
             }}
             onDragEnd={(activeIndex, overIndex) => {
               setSheets((sheets) => arrayMove(sheets, activeIndex, overIndex))
             }}
+            handle
           />
         </Flex>
       </Box>

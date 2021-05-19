@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { Transform } from '@dnd-kit/utilities'
 import styles from '../../styles/sortable/Item.module.scss'
+import { ItemBuilder } from './Sortable'
 
 export interface Props {
   dragOverlay?: boolean
@@ -34,7 +35,7 @@ export interface Props {
     transition: Props['transition']
     value: Props['value']
   }): React.ReactElement
-  itemBuilder: (index: number) => JSX.Element
+  itemBuilder: ItemBuilder
 }
 
 export const Item = React.memo(
@@ -134,7 +135,7 @@ export const Item = React.memo(
             {...props}
             tabIndex={!handle ? 0 : undefined}
           >
-            {itemBuilder(index)}
+            {itemBuilder(index, listeners)}
           </div>
         </div>
       )
