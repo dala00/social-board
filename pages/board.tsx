@@ -1,25 +1,37 @@
 import { Box, Flex } from '@chakra-ui/layout'
+import { arrayMove } from '@dnd-kit/sortable'
 import Head from 'next/head'
+import { useEffect } from 'react'
 import BoardSheet from '../components/board/BoardSheet'
-import { Sheet } from '../models/Sheet'
+import { Sortable } from '../components/sortable/Sortable'
+import { useBoard } from '../hooks/board'
 import styles from '../styles/Board.module.css'
 
 export default function Board() {
-  const sheets: Sheet[] = [
-    {
-      id: 1,
-      name: 'test',
-      tasks: [
-        { id: 1, body: 'aiueo' },
-        { id: 2, body: 'bbbbb' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'test2',
-      tasks: [{ id: 3, body: 'aiueo' }],
-    },
-  ]
+  const { sheets, setSheets } = useBoard()
+
+  useEffect(() => {
+    setSheets([
+      {
+        id: 1,
+        name: 'test',
+        tasks: [
+          { id: 1, body: 'aiueo' },
+          { id: 2, body: 'bbbbb' },
+          { id: 3, body: 'bbbbb' },
+          { id: 4, body: 'bbbbb' },
+          { id: 6, body: 'bbbbb' },
+          { id: 8, body: 'bbbbb' },
+          { id: 9, body: 'bbbbb' },
+        ],
+      },
+      {
+        id: 2,
+        name: 'test2',
+        tasks: [{ id: 3, body: 'aiueo' }],
+      },
+    ])
+  }, [])
 
   return (
     <>
@@ -30,10 +42,20 @@ export default function Board() {
       </Head>
 
       <Box as="main" className={styles.main} backgroundColor="blue.100">
-        <Flex p={4}>
-          {sheets.map((sheet) => (
-            <BoardSheet key={sheet.id} sheet={sheet} />
-          ))}
+        <Flex as={'ul'} p={4}>
+          <Sortable
+            items={sheets.map((sheet) => sheet.id.toString())}
+            itemBuilder={(index) => {
+              if (index === undefined) {
+                return <></>
+              }
+              const sheet = sheets[index]
+              return <BoardSheet key={sheet.id.toString()} sheet={sheet} />
+            }}
+            onDragEnd={(activeIndex, overIndex) => {
+              setSheets((sheets) => arrayMove(sheets, activeIndex, overIndex))
+            }}
+          />
         </Flex>
       </Box>
     </>
