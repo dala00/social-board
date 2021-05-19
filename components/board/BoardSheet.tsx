@@ -13,7 +13,7 @@ type Props = {
 export default function BoardSheet(props: Props) {
   return (
     <Box backgroundColor="gray.400" borderRadius={8} mr={4} py={1}>
-      <Flex alignItems={'center'} m={4} {...props.listeners}>
+      <Flex alignItems={'center'} m={4} cursor={'grab'} {...props.listeners}>
         <Icon as={GrDrag}></Icon>
         <Box ml={2}>{props.sheet.name}</Box>
       </Flex>
