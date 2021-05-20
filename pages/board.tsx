@@ -2,13 +2,17 @@ import { Box, Flex } from '@chakra-ui/layout'
 import { arrayMove } from '@dnd-kit/sortable'
 import Head from 'next/head'
 import { useEffect } from 'react'
+import BoardCard from '../components/board/BoardCard'
 import BoardSheet from '../components/board/BoardSheet'
+import { MultipleContainers } from '../components/sortable/MultipleContainers'
 import { Sortable } from '../components/sortable/Sortable'
 import { useBoard } from '../hooks/board'
+import { Sheet } from '../models/Sheet'
+import { Task } from '../models/Task'
 import styles from '../styles/Board.module.css'
 
 export default function Board() {
-  const { sheets, setSheets } = useBoard()
+  const { sheets, setSheets, multipleContainersItems, getTask } = useBoard()
 
   useEffect(() => {
     setSheets([
@@ -16,19 +20,22 @@ export default function Board() {
         id: 1,
         name: 'test',
         tasks: [
-          { id: 1, body: 'aiueo' },
-          { id: 2, body: 'bbbbb' },
-          { id: 3, body: 'bbbbb' },
-          { id: 4, body: 'bbbbb' },
-          { id: 6, body: 'bbbbb' },
-          { id: 8, body: 'bbbbb' },
-          { id: 9, body: 'bbbbb' },
+          { id: 10, body: 'aiueo' },
+          { id: 20, body: 'bbbbb' },
+          { id: 40, body: 'bbbbb' },
+          { id: 50, body: 'bbbbb' },
+          { id: 60, body: 'bbbbb' },
+          { id: 80, body: 'bbbbb' },
+          { id: 90, body: 'bbbbb' },
         ],
       },
       {
         id: 2,
         name: 'test2',
-        tasks: [{ id: 3, body: 'aiueo' }],
+        tasks: [
+          { id: 30, body: 'aiueo' },
+          { id: 100, body: 'aiueo' },
+        ],
       },
     ])
   }, [])
@@ -42,8 +49,76 @@ export default function Board() {
       </Head>
 
       <Box as="main" className={styles.main} backgroundColor="blue.100">
-        <Flex as={'ul'} p={4}>
-          <Sortable
+        <Flex p={4}>
+          <MultipleContainers
+            items={multipleContainersItems}
+            listBuilder={(sheetId, children) => {
+              const sheet = sheets.find((sheet) => sheet.id === Number(sheetId))
+              return (
+                <BoardSheet
+                  key={sheetId}
+                  sheet={sheet}
+                  // listeners={listeners}
+                  children={children}
+                />
+              )
+            }}
+            itemBuilder={(taskId, listeners) => {
+              const task = getTask(Number(taskId))
+              return <BoardCard key={task.id} task={task} />
+            }}
+            onDragStart={() => {}}
+            onDragCancel={() => {}}
+            onDragOver={(activeContainer, overContainer, activeId, overId) => {
+              console.log({
+                a: 'over',
+                activeContainer,
+                overContainer,
+                activeId,
+                overId,
+              })
+              const activeSheetId = Number(activeContainer)
+              const overSheetId = Number(overContainer)
+              const taskId = Number(activeId)
+              const overTaskId = Number(overId)
+              const activeSheet = sheets.find(
+                (sheet) => sheet.id === activeSheetId
+              )
+              const overSheet = sheets.find((sheet) => sheet.id === overSheetId)
+              const task = activeSheet.tasks.find((t) => t.id === taskId)
+              const overTask = overSheet.tasks.find((t) => t.id === overTaskId)
+              if (!overTask) {
+                return
+              }
+              const newActiveSheet = {
+                ...activeSheet,
+                tasks: activeSheet.tasks.filter((t) => t.id !== taskId),
+              }
+              const newTasks: Task[] = []
+              overSheet.tasks.forEach((overSheetTask) => {
+                newTasks.push(overSheetTask)
+                if (overSheetTask.id === overTaskId) {
+                  newTasks.push(task)
+                }
+              })
+              const newOverSheet = { ...overSheet, tasks: newTasks }
+              const newSheets = sheets.map((sheet) => {
+                if (sheet.id === newActiveSheet.id) {
+                  return newActiveSheet
+                } else if (sheet.id === newOverSheet.id) {
+                  return newOverSheet
+                } else {
+                  return sheet
+                }
+              })
+              console.log(newSheets)
+              setSheets(newSheets)
+            }}
+            onDragEnd={(activeId, overId) => {
+              console.log({ activeId, overId })
+            }}
+          />
+          {/* <Sortable
             items={sheets.map((sheet) => sheet.id.toString())}
             itemBuilder={(index, listeners) => {
               if (index === undefined) {
@@ -62,7 +137,7 @@ export default function Board() {
               setSheets((sheets) => arrayMove(sheets, activeIndex, overIndex))
             }}
             handle
-          />
+          /> */}
         </Flex>
       </Box>
     </>

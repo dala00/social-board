@@ -20,7 +20,7 @@ export interface Props {
   style?: React.CSSProperties
   transition?: string | null
   wrapperStyle?: React.CSSProperties
-  value: React.ReactNode
+  value: string
   onRemove?(): void
   renderItem?(args: {
     dragOverlay: boolean
@@ -135,7 +135,7 @@ export const Item = React.memo(
             {...props}
             tabIndex={!handle ? 0 : undefined}
           >
-            {itemBuilder(index, listeners)}
+            {itemBuilder(value, listeners)}
           </div>
         </div>
       )

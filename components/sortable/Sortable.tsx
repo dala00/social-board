@@ -31,7 +31,7 @@ import { Item } from './Item'
 import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 
 export type ItemBuilder = (
-  index: number,
+  id: string,
   listeners: SyntheticListenerMap
 ) => JSX.Element
 
