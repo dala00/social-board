@@ -12,7 +12,18 @@ import { Task } from '../models/Task'
 import styles from '../styles/Board.module.css'
 
 export default function Board() {
-  const { sheets, setSheets, multipleContainersItems, getTask } = useBoard()
+  const {
+    clonedSheets,
+    cloneSheets,
+    convertToMultipleContainersItems,
+    getSortItemId,
+    getTask,
+    moveTask,
+    setClonedSheets,
+    setSheets,
+    sheets,
+    swap,
+  } = useBoard()
 
   useEffect(() => {
     setSheets([
@@ -20,21 +31,21 @@ export default function Board() {
         id: 1,
         name: 'test',
         tasks: [
-          { id: 10, body: 'aiueo' },
-          { id: 20, body: 'bbbbb' },
-          { id: 40, body: 'bbbbb' },
-          { id: 50, body: 'bbbbb' },
-          { id: 60, body: 'bbbbb' },
-          { id: 80, body: 'bbbbb' },
-          { id: 90, body: 'bbbbb' },
+          { id: 1, body: 'aiueo' },
+          { id: 2, body: 'bbbbb' },
+          { id: 4, body: 'bbbbb' },
+          { id: 5, body: 'bbbbb' },
+          { id: 6, body: 'bbbbb' },
+          { id: 8, body: 'bbbbb' },
+          { id: 9, body: 'bbbbb' },
         ],
       },
       {
         id: 2,
         name: 'test2',
         tasks: [
-          { id: 30, body: 'aiueo' },
-          { id: 100, body: 'aiueo' },
+          { id: 3, body: 'aiueo' },
+          { id: 10, body: 'aiueo' },
         ],
       },
     ])
@@ -51,9 +62,10 @@ export default function Board() {
       <Box as="main" className={styles.main} backgroundColor="blue.100">
         <Flex p={4}>
           <MultipleContainers
-            items={multipleContainersItems}
+            items={convertToMultipleContainersItems(clonedSheets || sheets)}
             listBuilder={(sheetId, children) => {
-              const sheet = sheets.find((sheet) => sheet.id === Number(sheetId))
+              const sortItemId = getSortItemId(sheetId)
+              const sheet = sheets.find((sheet) => sheet.id === sortItemId.id)
               return (
                 <BoardSheet
                   key={sheetId}
@@ -64,58 +76,33 @@ export default function Board() {
               )
             }}
             itemBuilder={(taskId, listeners) => {
-              const task = getTask(Number(taskId))
+              const sortItemId = getSortItemId(taskId)
+              const task = getTask(sortItemId.id)
               return <BoardCard key={task.id} task={task} />
             }}
-            onDragStart={() => {}}
-            onDragCancel={() => {}}
+            onDragStart={() => cloneSheets()}
+            onDragCancel={() => setClonedSheets(null)}
             onDragOver={(activeContainer, overContainer, activeId, overId) => {
-              console.log({
-                a: 'over',
+              if (!clonedSheets) {
+                return
+              }
+
+              const newSheets = moveTask(
+                clonedSheets,
                 activeContainer,
                 overContainer,
                 activeId,
-                overId,
-              })
-              const activeSheetId = Number(activeContainer)
-              const overSheetId = Number(overContainer)
-              const taskId = Number(activeId)
-              const overTaskId = Number(overId)
-              const activeSheet = sheets.find(
-                (sheet) => sheet.id === activeSheetId
+                overId
               )
-              const overSheet = sheets.find((sheet) => sheet.id === overSheetId)
-              const task = activeSheet.tasks.find((t) => t.id === taskId)
-              const overTask = overSheet.tasks.find((t) => t.id === overTaskId)
-              if (!overTask) {
+              if (!newSheets) {
                 return
               }
-              const newActiveSheet = {
-                ...activeSheet,
-                tasks: activeSheet.tasks.filter((t) => t.id !== taskId),
-              }
-              const newTasks: Task[] = []
-              overSheet.tasks.forEach((overSheetTask) => {
-                newTasks.push(overSheetTask)
-                if (overSheetTask.id === overTaskId) {
-                  newTasks.push(task)
-                }
-              })
-              const newOverSheet = { ...overSheet, tasks: newTasks }
-              const newSheets = sheets.map((sheet) => {
-                if (sheet.id === newActiveSheet.id) {
-                  return newActiveSheet
-                } else if (sheet.id === newOverSheet.id) {
-                  return newOverSheet
-                } else {
-                  return sheet
-                }
-              })
-              console.log(newSheets)
-              setSheets(newSheets)
+              setClonedSheets(newSheets)
             }}
-            onDragEnd={(activeId, overId) => {
-              console.log({ activeId, overId })
+            onDragEnd={(container, activeId, overId) => {
+              const newSheets = swap(container, activeId, overId)
+              setSheets(newSheets)
+              setClonedSheets(null)
             }}
           />
           {/* <Sortable

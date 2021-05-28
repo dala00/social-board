@@ -19,7 +19,6 @@ import {
 import {
   SortableContext,
   useSortable,
-  arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   SortingStrategy,
@@ -52,16 +51,6 @@ function DroppableContainer({
     id,
   })
   const isOverContainer = isOver || (over ? items.includes(over.id) : false)
-
-  //   return (
-  //     <List
-  //       ref={setNodeRef}
-  //       style={getStyle({ isOverContainer })}
-  //       columns={columns}
-  //     >
-  //       {children}
-  //     </List>
-  //   )
 
   return (
     <div
@@ -130,7 +119,7 @@ interface Props {
     activeId: string,
     overId: string
   ) => void
-  onDragEnd: (activeId: string, overId: string) => void
+  onDragEnd: (container: string, activeId: string, overId: string) => void
 }
 
 export const VOID_ID = 'void'
@@ -280,15 +269,7 @@ export function MultipleContainers({
           const overIndex = items[overContainer].indexOf(overId)
 
           if (activeIndex !== overIndex) {
-            onDragEnd(activeId, overId)
-            // setItems((items) => ({
-            //   ...items,
-            //   [overContainer]: arrayMove(
-            //     items[overContainer],
-            //     activeIndex,
-            //     overIndex
-            //   ),
-            // }))
+            onDragEnd(activeContainer, activeId, overId)
           }
         }
 
