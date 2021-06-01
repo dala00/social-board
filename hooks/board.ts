@@ -1,5 +1,7 @@
+import { Active, Over } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useMemo } from 'react'
+import { GrTasks } from 'react-icons/gr'
 import { atom, useRecoilState } from 'recoil'
 import { Sheet } from '../models/Sheet'
 import { Task } from '../models/Task'
@@ -32,8 +34,8 @@ export function useBoard() {
   }, [])
 
   const getTask = useCallback(
-    (id: number) => {
-      for (const sheet of sheets) {
+    (id: number, searchSheets?: Sheet[]) => {
+      for (const sheet of searchSheets || sheets) {
         const task = sheet.tasks.find((task) => task.id === id)
         if (task) {
           return task
@@ -66,7 +68,12 @@ export function useBoard() {
     setClonedSheets(cloned)
   }, [sheets])
 
-  function swap(container: string, activeId: string, overId: string): Sheet[] {
+  function swap(
+    sheets: Sheet[],
+    container: string,
+    activeId: string,
+    overId: string
+  ): Sheet[] {
     const sheetItemId = getSortItemId(container)
     const activeItemId = getSortItemId(activeId)
     const overItemId = getSortItemId(overId)
@@ -85,67 +92,65 @@ export function useBoard() {
     })
   }
 
-  function moveTask(
+  function moveOverTask(
     sheets: Sheet[],
     activeContainer: string,
+    overContainer: string,
+    active: Active,
+    over: Over
+  ): Sheet[] | undefined {
+    const activeSheetItemId = getSortItemId(activeContainer)
+    const overSheetItemId = getSortItemId(overContainer)
+    const taskItemId = getSortItemId(active.id)
+    const overItemId = getSortItemId(over.id)
+    if (overItemId.type === 'sheet') {
+      return
+    }
+
+    const overSheet = sheets.find((sheet) => sheet.id === overSheetItemId.id)
+    const overIndex = overSheet.tasks.findIndex(
+      (task) => task.id === overItemId.id
+    )
+    const isBelowLastItem =
+      over &&
+      overIndex === overSheet.tasks.length - 1 &&
+      active.rect.current.translated &&
+      active.rect.current.translated.offsetTop >
+        over.rect.offsetTop + over.rect.height
+    const modified = isBelowLastItem ? 1 : 0
+    const newIndex =
+      overIndex >= 0 ? overIndex + modified : overSheet.tasks.length + 1
+
+    return sheets.map((sheet) => {
+      if (sheet.id === activeSheetItemId.id) {
+        return {
+          ...sheet,
+          tasks: sheet.tasks.filter((task) => task.id !== taskItemId.id),
+        }
+      } else if (sheet.id === overSheetItemId.id) {
+        return {
+          ...sheet,
+          tasks: [
+            ...overSheet.tasks.slice(0, newIndex),
+            { ...getTask(taskItemId.id, sheets), sheetId: sheet.id },
+            ...overSheet.tasks.slice(newIndex),
+          ],
+        }
+      } else {
+        return sheet
+      }
+    })
+  }
+
+  function moveEndOverTask(
     overContainer: string,
     activeId: string,
     overId: string
   ): Sheet[] | undefined {
-    const activeSheetItemId = getSortItemId(activeContainer)
-    const overSheetItemId = getSortItemId(overContainer)
-    const taskSortItemId = getSortItemId(activeId)
-    const overSortItemId = getSortItemId(overId)
-    if (overSortItemId.type === 'sheet') {
-      return
+    if (activeId === overId) {
+      return clonedSheets
     }
-
-    const activeSheet = sheets.find(
-      (sheet) => sheet.id === activeSheetItemId.id
-    )
-    const overSheet = sheets.find((sheet) => sheet.id === overSheetItemId.id)
-    const task = activeSheet.tasks.find((t) => t.id === taskSortItemId.id)
-    const overTask = overSheet.tasks.find((t) => t.id === overSortItemId.id)
-    if (!task || !overTask) {
-      return
-    }
-
-    if (activeContainer === overContainer) {
-      const newTasks = arrayMove(
-        activeSheet.tasks,
-        activeSheet.tasks.findIndex((t) => t.id === task.id),
-        activeSheet.tasks.findIndex((t) => t.id === overTask.id)
-      )
-
-      return sheets.map((sheet) => {
-        if (sheet.id === activeSheet.id) {
-          return { ...activeSheet, tasks: newTasks }
-        }
-        return sheet
-      })
-    } else {
-      const newActiveSheet = {
-        ...activeSheet,
-        tasks: activeSheet.tasks.filter((t) => t.id !== taskSortItemId.id),
-      }
-      const newTasks: Task[] = []
-      overSheet.tasks.forEach((overSheetTask) => {
-        newTasks.push(overSheetTask)
-        if (overSheetTask.id === overSortItemId.id) {
-          newTasks.push(task)
-        }
-      })
-      const newOverSheet = { ...overSheet, tasks: newTasks }
-      return sheets.map((sheet) => {
-        if (sheet.id === newActiveSheet.id) {
-          return newActiveSheet
-        } else if (sheet.id === newOverSheet.id) {
-          return newOverSheet
-        } else {
-          return sheet
-        }
-      })
-    }
+    return swap(clonedSheets, overContainer, activeId, overId)
   }
 
   return {
@@ -154,7 +159,8 @@ export function useBoard() {
     convertToMultipleContainersItems,
     getSortItemId,
     getTask,
-    moveTask,
+    moveEndOverTask,
+    moveOverTask,
     setClonedSheets,
     setSheets,
     sheets,

@@ -18,7 +18,8 @@ export default function Board() {
     convertToMultipleContainersItems,
     getSortItemId,
     getTask,
-    moveTask,
+    moveEndOverTask,
+    moveOverTask,
     setClonedSheets,
     setSheets,
     sheets,
@@ -31,21 +32,29 @@ export default function Board() {
         id: 1,
         name: 'test',
         tasks: [
-          { id: 1, body: 'aiueo' },
-          { id: 2, body: 'bbbbb' },
-          { id: 4, body: 'bbbbb' },
-          { id: 5, body: 'bbbbb' },
-          { id: 6, body: 'bbbbb' },
-          { id: 8, body: 'bbbbb' },
-          { id: 9, body: 'bbbbb' },
+          { id: 1, sheetId: 1, body: 'aiueo' },
+          { id: 2, sheetId: 1, body: 'bbbbb' },
+          { id: 4, sheetId: 1, body: 'bbbbb' },
+          { id: 5, sheetId: 1, body: 'bbbbb' },
+          { id: 6, sheetId: 1, body: 'bbbbb' },
+          { id: 8, sheetId: 1, body: 'bbbbb' },
+          { id: 9, sheetId: 1, body: 'bbbbb' },
         ],
       },
       {
         id: 2,
         name: 'test2',
         tasks: [
-          { id: 3, body: 'aiueo' },
-          { id: 10, body: 'aiueo' },
+          { id: 3, sheetId: 2, body: 'aiueo' },
+          { id: 10, sheetId: 2, body: 'aiueo' },
+        ],
+      },
+      {
+        id: 3,
+        name: 'test3',
+        tasks: [
+          { id: 11, sheetId: 3, body: 'ccccc' },
+          { id: 12, sheetId: 3, body: 'cccccb' },
         ],
       },
     ])
@@ -82,26 +91,43 @@ export default function Board() {
             }}
             onDragStart={() => cloneSheets()}
             onDragCancel={() => setClonedSheets(null)}
-            onDragOver={(activeContainer, overContainer, activeId, overId) => {
+            onDragOver={(activeContainer, overContainer, active, over) => {
               if (!clonedSheets) {
                 return
               }
 
-              const newSheets = moveTask(
+              const newSheets = moveOverTask(
                 clonedSheets,
                 activeContainer,
                 overContainer,
-                activeId,
-                overId
+                active,
+                over
               )
               if (!newSheets) {
                 return
               }
               setClonedSheets(newSheets)
             }}
-            onDragEnd={(container, activeId, overId) => {
-              const newSheets = swap(container, activeId, overId)
-              setSheets(newSheets)
+            onDragEnd={(activeContainer, overContainer, activeId, overId) => {
+              const taskItemId = getSortItemId(activeId)
+              const task = getTask(taskItemId.id)
+              const clonedTask = getTask(taskItemId.id, clonedSheets)
+              if (task.sheetId !== clonedTask.sheetId) {
+                const newSheets = moveEndOverTask(
+                  overContainer,
+                  activeId,
+                  overId
+                )
+                setSheets(newSheets)
+              } else {
+                const newSheets = swap(
+                  sheets,
+                  activeContainer,
+                  activeId,
+                  overId
+                )
+                setSheets(newSheets)
+              }
               setClonedSheets(null)
             }}
           />

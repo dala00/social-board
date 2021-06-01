@@ -15,6 +15,8 @@ import {
   UniqueIdentifier,
   useSensors,
   useSensor,
+  Active,
+  Over,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -116,10 +118,15 @@ interface Props {
   onDragOver: (
     activeContainer: string,
     overContainer: string,
+    active: Active,
+    over: Over
+  ) => void
+  onDragEnd: (
+    activeContainer: string,
+    overContainer: string,
     activeId: string,
     overId: string
   ) => void
-  onDragEnd: (container: string, activeId: string, overId: string) => void
 }
 
 export const VOID_ID = 'void'
@@ -205,43 +212,10 @@ export function MultipleContainers({
           return
         }
 
-        if (activeContainer !== overContainer) {
-          onDragOver(activeContainer, overContainer, active.id, overId)
-          // setItems((items) => {
-          //   const activeItems = items[activeContainer]
-          //   const overItems = items[overContainer]
-          //   const overIndex = overItems.indexOf(overId)
-          //   const activeIndex = activeItems.indexOf(active.id)
-          //   let newIndex: number
-          //   if (overId in items) {
-          //     newIndex = overItems.length + 1
-          //   } else {
-          //     const isBelowLastItem =
-          //       over &&
-          //       overIndex === overItems.length - 1 &&
-          //       active.rect.current.translated &&
-          //       active.rect.current.translated.offsetTop >
-          //         over.rect.offsetTop + over.rect.height
-          //     const modifier = isBelowLastItem ? 1 : 0
-          //     newIndex =
-          //       overIndex >= 0 ? overIndex + modifier : overItems.length + 1
-          //   }
-          //   return {
-          //     ...items,
-          //     [activeContainer]: [
-          //       ...items[activeContainer].filter((item) => item !== active.id),
-          //     ],
-          //     [overContainer]: [
-          //       ...items[overContainer].slice(0, newIndex),
-          //       items[activeContainer][activeIndex],
-          //       ...items[overContainer].slice(
-          //         newIndex,
-          //         items[overContainer].length
-          //       ),
-          //     ],
-          //   }
-          // })
+        if (activeContainer === overContainer) {
+          return
         }
+        onDragOver(activeContainer, overContainer, active, over)
       }}
       onDragEnd={({ active, over }) => {
         const activeContainer = findContainer(active.id)
@@ -265,12 +239,7 @@ export function MultipleContainers({
         const overContainer = findContainer(overId)
 
         if (activeContainer && overContainer) {
-          const activeIndex = items[activeContainer].indexOf(active.id)
-          const overIndex = items[overContainer].indexOf(overId)
-
-          if (activeIndex !== overIndex) {
-            onDragEnd(activeContainer, activeId, overId)
-          }
+          onDragEnd(activeContainer, overContainer, activeId, overId)
         }
 
         setActiveId(null)
