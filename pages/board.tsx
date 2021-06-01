@@ -119,6 +119,8 @@ export default function Board() {
                   overId
                 )
                 setSheets(newSheets)
+              } else if (activeId === overId) {
+                setSheets(clonedSheets)
               } else {
                 const newSheets = swap(
                   sheets,
