@@ -60,6 +60,8 @@ export function SortableContainer({
     disabled,
   })
 
+  console.log({ id, isDragging, isSorting, transform, transition })
+
   return (
     <Item
       ref={setNodeRef}
