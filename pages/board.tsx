@@ -1,7 +1,7 @@
 import { Box, Flex } from '@chakra-ui/layout'
 import { arrayMove } from '@dnd-kit/sortable'
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import BoardCard from '../components/board/BoardCard'
 import BoardSheet from '../components/board/BoardSheet'
 import { MultipleContainers } from '../components/sortable/MultipleContainers'
@@ -20,6 +20,7 @@ export default function Board() {
     getTask,
     moveEndOverTask,
     moveOverTask,
+    moveSheet,
     setClonedSheets,
     setSheets,
     sheets,
@@ -60,6 +61,37 @@ export default function Board() {
     ])
   }, [])
 
+  const onTaskDragEnd = useCallback(
+    (activeContainer, overContainer, activeId, overId) => {
+      const activeItemId = getSortItemId(activeId)
+      const task = getTask(activeItemId.id)
+      const clonedTask = getTask(activeItemId.id, clonedSheets)
+      if (task.sheetId !== clonedTask.sheetId) {
+        const newSheets = moveEndOverTask(overContainer, activeId, overId)
+        setSheets(newSheets)
+      } else if (activeId === overId) {
+        setSheets(clonedSheets)
+      } else {
+        const newSheets = swap(sheets, activeContainer, activeId, overId)
+        setSheets(newSheets)
+      }
+      setClonedSheets(null)
+    },
+    [sheets, clonedSheets]
+  )
+
+  const onDragEnd = useCallback(
+    (activeContainer, overContainer, activeId, overId) => {
+      const activeItemId = getSortItemId(activeId)
+      if (activeItemId.type === 'sheet') {
+        moveSheet(activeId, overId)
+      } else {
+        onTaskDragEnd(activeContainer, overContainer, activeId, overId)
+      }
+    },
+    [sheets, clonedSheets]
+  )
+
   return (
     <>
       <Head>
@@ -71,15 +103,16 @@ export default function Board() {
       <Box as="main" className={styles.main} backgroundColor="blue.100">
         <Flex p={4}>
           <MultipleContainers
+            containerItems={sheets.map((sheet) => sheet.id.toString())}
             items={convertToMultipleContainersItems(clonedSheets || sheets)}
-            listBuilder={(sheetId, children) => {
+            listBuilder={(sheetId, listeners, children) => {
               const sortItemId = getSortItemId(sheetId)
               const sheet = sheets.find((sheet) => sheet.id === sortItemId.id)
               return (
                 <BoardSheet
                   key={sheetId}
                   sheet={sheet}
-                  // listeners={listeners}
+                  listeners={listeners}
                   children={children}
                 />
               )
@@ -108,30 +141,7 @@ export default function Board() {
               }
               setClonedSheets(newSheets)
             }}
-            onDragEnd={(activeContainer, overContainer, activeId, overId) => {
-              const taskItemId = getSortItemId(activeId)
-              const task = getTask(taskItemId.id)
-              const clonedTask = getTask(taskItemId.id, clonedSheets)
-              if (task.sheetId !== clonedTask.sheetId) {
-                const newSheets = moveEndOverTask(
-                  overContainer,
-                  activeId,
-                  overId
-                )
-                setSheets(newSheets)
-              } else if (activeId === overId) {
-                setSheets(clonedSheets)
-              } else {
-                const newSheets = swap(
-                  sheets,
-                  activeContainer,
-                  activeId,
-                  overId
-                )
-                setSheets(newSheets)
-              }
-              setClonedSheets(null)
-            }}
+            onDragEnd={onDragEnd}
           />
           {/* <Sortable
             items={sheets.map((sheet) => sheet.id.toString())}

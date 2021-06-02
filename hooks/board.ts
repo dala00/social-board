@@ -68,6 +68,26 @@ export function useBoard() {
     setClonedSheets(cloned)
   }, [sheets])
 
+  const moveSheet = useCallback(
+    (activeId, overId) => {
+      if (activeId === overId) {
+        return
+      }
+
+      const activeItemId = getSortItemId(activeId)
+      const overItemId = getSortItemId(overId)
+      setSheets((sheets) =>
+        arrayMove(
+          sheets,
+          sheets.findIndex((sheet) => sheet.id === activeItemId.id),
+          sheets.findIndex((sheet) => sheet.id === overItemId.id)
+        )
+      )
+      setClonedSheets(null)
+    },
+    [sheets, clonedSheets]
+  )
+
   function swap(
     sheets: Sheet[],
     container: string,
@@ -161,6 +181,7 @@ export function useBoard() {
     getTask,
     moveEndOverTask,
     moveOverTask,
+    moveSheet,
     setClonedSheets,
     setSheets,
     sheets,

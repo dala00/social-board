@@ -24,17 +24,24 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   SortingStrategy,
+  rectSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Item } from './Item'
-import { ItemBuilder } from './Sortable'
+import { ItemBuilder, SortableContainer } from './SortableContainer'
+import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 
-type ListBuilder = (id: string, children: React.ReactNode) => JSX.Element
+type ListBuilder = (
+  id: string,
+  listeners: SyntheticListenerMap,
+  children: React.ReactNode
+) => JSX.Element
 
 function DroppableContainer({
   children,
   columns = 1,
   id,
   items,
+  listeners,
   listBuilder,
   getStyle = () => ({}),
 }: {
@@ -42,6 +49,7 @@ function DroppableContainer({
   columns?: number
   id: string
   items: string[]
+  listeners: SyntheticListenerMap
   listBuilder: ListBuilder
   getStyle: ({
     isOverContainer,
@@ -65,7 +73,7 @@ function DroppableContainer({
       }
       // className={classNames(styles.List, horizontal && styles.horizontal)}
     >
-      {listBuilder(id, children)}
+      {listBuilder(id, listeners, children)}
     </div>
   )
 }
@@ -104,7 +112,8 @@ interface Props {
   }): React.CSSProperties
   wrapperStyle?(args: { index: number }): React.CSSProperties
   getContainerStyle?(args: { isOverContainer: boolean }): React.CSSProperties
-  items?: Items
+  items: Items
+  containerItems: string[]
   handle?: boolean
   renderItem?: any
   strategy?: SortingStrategy
@@ -138,6 +147,7 @@ export function MultipleContainers({
   columns,
   handle = false,
   items,
+  containerItems,
   getItemStyles = () => ({}),
   getContainerStyle = defaultContainerStyle,
   wrapperStyle = () => ({}),
@@ -153,7 +163,6 @@ export function MultipleContainers({
   onDragOver,
   onDragEnd,
 }: Props) {
-  const [clonedItems, setClonedItems] = useState<Items | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -248,74 +257,91 @@ export function MultipleContainers({
       onDragCancel={onDragCancelFunc}
       modifiers={modifiers}
     >
-      <div
-        style={{
-          display: 'inline-grid',
-          boxSizing: 'border-box',
-          padding: '0px 20px',
-          gridAutoFlow: vertical ? 'row' : 'column',
-        }}
-      >
-        {Object.keys(items)
-          .filter((key) => key !== VOID_ID)
-          .map((containerId) => (
-            <SortableContext
-              key={containerId}
-              items={items[containerId]}
-              strategy={strategy}
-            >
-              <DroppableContainer
+      <SortableContext items={containerItems} strategy={rectSortingStrategy}>
+        <div
+          style={{
+            display: 'inline-grid',
+            boxSizing: 'border-box',
+            padding: '0px 20px',
+            gridAutoFlow: vertical ? 'row' : 'column',
+          }}
+        >
+          {Object.keys(items)
+            .filter((key) => key !== VOID_ID)
+            .map((containerId, index) => (
+              <SortableContainer
+                key={containerId}
                 id={containerId}
-                columns={columns}
-                items={items[containerId]}
-                getStyle={getContainerStyle}
-                listBuilder={listBuilder}
-              >
-                {items[containerId].map((value, index) => {
-                  return (
-                    <SortableItem
-                      key={value}
-                      id={value}
-                      index={index}
-                      handle={handle}
-                      style={getItemStyles}
-                      wrapperStyle={wrapperStyle}
-                      renderItem={renderItem}
-                      itemBuilder={itemBuilder}
-                      containerId={containerId}
-                      getIndex={getIndex}
-                    />
-                  )
+                index={index}
+                style={getItemStyles}
+                wrapperStyle={wrapperStyle}
+                // disabled={isDisabled(value)}
+                renderItem={renderItem}
+                // animateLayoutChanges={animateLayoutChanges}
+                useDragOverlay={true}
+                itemBuilder={(sheetId, listeners) => (
+                  <SortableContext
+                    key={containerId}
+                    items={items[containerId]}
+                    strategy={strategy}
+                  >
+                    <DroppableContainer
+                      id={containerId}
+                      columns={columns}
+                      items={items[containerId]}
+                      getStyle={getContainerStyle}
+                      listeners={listeners}
+                      listBuilder={listBuilder}
+                    >
+                      {items[containerId].map((value, index) => {
+                        return (
+                          <SortableItem
+                            key={value}
+                            id={value}
+                            index={index}
+                            handle={handle}
+                            style={getItemStyles}
+                            wrapperStyle={wrapperStyle}
+                            renderItem={renderItem}
+                            itemBuilder={itemBuilder}
+                            containerId={containerId}
+                            getIndex={getIndex}
+                          />
+                        )
+                      })}
+                    </DroppableContainer>
+                  </SortableContext>
+                )}
+              />
+            ))}
+        </div>
+      </SortableContext>
+      {activeId?.match(/^task/) != null &&
+        createPortal(
+          <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
+            {activeId ? (
+              <Item
+                value={activeId}
+                handle={handle}
+                style={getItemStyles({
+                  containerId: findContainer(activeId) as string,
+                  overIndex: -1,
+                  index: getIndex(activeId),
+                  value: activeId,
+                  isSorting: activeId !== null,
+                  isDragging: true,
+                  isDragOverlay: true,
                 })}
-              </DroppableContainer>
-            </SortableContext>
-          ))}
-      </div>
-      {createPortal(
-        <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
-          {activeId ? (
-            <Item
-              value={activeId}
-              handle={handle}
-              style={getItemStyles({
-                containerId: findContainer(activeId) as string,
-                overIndex: -1,
-                index: getIndex(activeId),
-                value: activeId,
-                isSorting: activeId !== null,
-                isDragging: true,
-                isDragOverlay: true,
-              })}
-              color={getColor(activeId)}
-              wrapperStyle={wrapperStyle({ index: 0 })}
-              renderItem={renderItem}
-              itemBuilder={itemBuilder}
-              dragOverlay
-            />
-          ) : null}
-        </DragOverlay>,
-        document.body
-      )}
+                color={getColor(activeId)}
+                wrapperStyle={wrapperStyle({ index: 0 })}
+                renderItem={renderItem}
+                itemBuilder={itemBuilder}
+                dragOverlay
+              />
+            ) : null}
+          </DragOverlay>,
+          document.body
+        )}
       {trashable && activeId ? <Trash /> : null}
     </DndContext>
   )
