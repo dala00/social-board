@@ -219,63 +219,54 @@ export function MultipleContainers({
       modifiers={modifiers}
     >
       <SortableContext items={containerItems} strategy={rectSortingStrategy}>
-        <div
-          style={{
-            display: 'inline-grid',
-            boxSizing: 'border-box',
-            padding: '0px 20px',
-            gridAutoFlow: vertical ? 'row' : 'column',
-          }}
-        >
-          {Object.keys(items)
-            .filter((key) => key !== VOID_ID)
-            .map((containerId, index) => (
-              <SortableContainer
-                key={containerId}
-                id={containerId}
-                index={index}
-                style={getItemStyles}
-                wrapperStyle={wrapperStyle}
-                disabled={false}
-                renderItem={renderItem}
-                // animateLayoutChanges={animateLayoutChanges}
-                useDragOverlay={true}
-                itemBuilder={(sheetId, listeners) => (
-                  <SortableContext
-                    key={containerId}
+        {Object.keys(items)
+          .filter((key) => key !== VOID_ID)
+          .map((containerId, index) => (
+            <SortableContainer
+              key={containerId}
+              id={containerId}
+              index={index}
+              style={getItemStyles}
+              wrapperStyle={wrapperStyle}
+              disabled={false}
+              renderItem={renderItem}
+              // animateLayoutChanges={animateLayoutChanges}
+              useDragOverlay={true}
+              itemBuilder={(sheetId, listeners) => (
+                <SortableContext
+                  key={containerId}
+                  items={items[containerId]}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <DroppableItemContainer
+                    id={containerId}
+                    columns={columns}
                     items={items[containerId]}
-                    strategy={verticalListSortingStrategy}
+                    getStyle={getContainerStyle}
+                    listeners={listeners}
+                    listBuilder={listBuilder}
                   >
-                    <DroppableItemContainer
-                      id={containerId}
-                      columns={columns}
-                      items={items[containerId]}
-                      getStyle={getContainerStyle}
-                      listeners={listeners}
-                      listBuilder={listBuilder}
-                    >
-                      {items[containerId].map((value, index) => {
-                        return (
-                          <SortableItem
-                            key={value}
-                            id={value}
-                            index={index}
-                            handle={handle}
-                            style={getItemStyles}
-                            wrapperStyle={wrapperStyle}
-                            renderItem={renderItem}
-                            itemBuilder={itemBuilder}
-                            containerId={containerId}
-                            getIndex={getIndex}
-                          />
-                        )
-                      })}
-                    </DroppableItemContainer>
-                  </SortableContext>
-                )}
-              />
-            ))}
-        </div>
+                    {items[containerId].map((value, index) => {
+                      return (
+                        <SortableItem
+                          key={value}
+                          id={value}
+                          index={index}
+                          handle={handle}
+                          style={getItemStyles}
+                          wrapperStyle={wrapperStyle}
+                          renderItem={renderItem}
+                          itemBuilder={itemBuilder}
+                          containerId={containerId}
+                          getIndex={getIndex}
+                        />
+                      )
+                    })}
+                  </DroppableItemContainer>
+                </SortableContext>
+              )}
+            />
+          ))}
       </SortableContext>
       {createPortal(
         <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
