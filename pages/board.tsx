@@ -103,7 +103,9 @@ export default function Board() {
       <Box as="main" className={styles.main} backgroundColor="blue.100">
         <Flex p={4}>
           <MultipleContainers
-            containerItems={sheets.map((sheet) => sheet.id.toString())}
+            containerItems={sheets.map(
+              (sheet) => `sheet-${sheet.id.toString()}`
+            )}
             items={convertToMultipleContainersItems(clonedSheets || sheets)}
             listBuilder={(sheetId, listeners, children) => {
               const sortItemId = getSortItemId(sheetId)
