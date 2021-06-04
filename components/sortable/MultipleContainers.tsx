@@ -270,7 +270,7 @@ export function MultipleContainers({
       </SortableContext>
       {createPortal(
         <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
-          {activeId ? (
+          {/^task/.test(activeId) ? (
             <Item
               value={activeId}
               handle={handle}
@@ -286,6 +286,25 @@ export function MultipleContainers({
               wrapperStyle={wrapperStyle({ index: 0 })}
               renderItem={renderItem}
               itemBuilder={itemBuilder}
+              dragOverlay
+            />
+          ) : null}
+          {/^sheet/.test(activeId) ? (
+            <Item
+              value={activeId}
+              handle={handle}
+              style={getItemStyles({
+                containerId: findContainer(activeId) as string,
+                overIndex: -1,
+                index: getIndex(activeId),
+                value: activeId,
+                isSorting: activeId !== null,
+                isDragging: true,
+                isDragOverlay: true,
+              })}
+              wrapperStyle={wrapperStyle({ index: 0 })}
+              renderItem={renderItem}
+              itemBuilder={(id, listeners) => listBuilder(id, listeners, [])}
               dragOverlay
             />
           ) : null}
