@@ -18,10 +18,12 @@ export default function Board() {
     convertToMultipleContainersItems,
     getSortItemId,
     getTask,
+    isDraggingSheet,
     moveEndOverTask,
     moveOverTask,
     moveSheet,
     setClonedSheets,
+    setIsDraggingSheet,
     setSheets,
     sheets,
     swap,
@@ -88,6 +90,7 @@ export default function Board() {
       } else {
         onTaskDragEnd(activeContainer, overContainer, activeId, overId)
       }
+      setIsDraggingSheet(false)
     },
     [sheets, clonedSheets]
   )
@@ -115,7 +118,13 @@ export default function Board() {
                   key={sheetId}
                   sheet={sheet}
                   listeners={listeners}
-                  children={children}
+                  children={
+                    clonedSheets !== null && isDraggingSheet
+                      ? sheet.tasks.map((task) => (
+                          <BoardCard key={task.id} task={task} />
+                        ))
+                      : children
+                  }
                 />
               )
             }}
@@ -124,8 +133,14 @@ export default function Board() {
               const task = getTask(sortItemId.id)
               return <BoardCard key={task.id} task={task} />
             }}
-            onDragStart={() => cloneSheets()}
-            onDragCancel={() => setClonedSheets(null)}
+            onDragStart={(activeId) => {
+              setIsDraggingSheet(/^sheet/.test(activeId))
+              cloneSheets()
+            }}
+            onDragCancel={() => {
+              setClonedSheets(null)
+              setIsDraggingSheet(false)
+            }}
             onDragOver={(activeContainer, overContainer, active, over) => {
               if (!clonedSheets) {
                 return
@@ -145,26 +160,6 @@ export default function Board() {
             }}
             onDragEnd={onDragEnd}
           />
-          {/* <Sortable
-            items={sheets.map((sheet) => sheet.id.toString())}
-            itemBuilder={(index, listeners) => {
-              if (index === undefined) {
-                return <></>
-              }
-              const sheet = sheets[index]
-              return (
-                <BoardSheet
-                  key={sheet.id.toString()}
-                  sheet={sheet}
-                  listeners={listeners}
-                />
-              )
-            }}
-            onDragEnd={(activeIndex, overIndex) => {
-              setSheets((sheets) => arrayMove(sheets, activeIndex, overIndex))
-            }}
-            handle
-          /> */}
         </Flex>
       </Box>
     </>

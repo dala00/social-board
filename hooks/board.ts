@@ -16,6 +16,11 @@ const clonedSheetsState = atom<Sheet[] | null>({
   default: null,
 })
 
+const isDraggingSheetState = atom({
+  key: 'board/is_dragging_sheet',
+  default: false,
+})
+
 type SortItemId = {
   type: string
   id: number
@@ -24,6 +29,8 @@ type SortItemId = {
 export function useBoard() {
   const [sheets, setSheets] = useRecoilState(sheetsState)
   const [clonedSheets, setClonedSheets] = useRecoilState(clonedSheetsState)
+  const [isDraggingSheet, setIsDraggingSheet] =
+    useRecoilState(isDraggingSheetState)
 
   const getSortItemId = useCallback((id: string): SortItemId => {
     const parts = id.split(/-/)
@@ -179,10 +186,12 @@ export function useBoard() {
     convertToMultipleContainersItems,
     getSortItemId,
     getTask,
+    isDraggingSheet,
     moveEndOverTask,
     moveOverTask,
     moveSheet,
     setClonedSheets,
+    setIsDraggingSheet,
     setSheets,
     sheets,
     swap,

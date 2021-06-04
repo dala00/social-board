@@ -82,7 +82,7 @@ interface Props {
   vertical?: boolean
   listBuilder: ListBuilder
   itemBuilder: ItemBuilder
-  onDragStart: () => void
+  onDragStart: (activeId: string) => void
   onDragCancel: () => void
   onDragOver: (
     activeContainer: string,
@@ -166,7 +166,7 @@ export function MultipleContainers({
       collisionDetection={collisionDetection}
       onDragStart={({ active }) => {
         setActiveId(active.id)
-        onDragStart()
+        onDragStart(active.id)
       }}
       onDragOver={({ active, over }) => {
         const overId = over?.id
