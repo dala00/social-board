@@ -30,6 +30,8 @@ import { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 import { SortableItem } from './SortableItem'
 import { DroppableItemContainer } from './DroppableItemContainer'
 import { Trash } from './Trash'
+import { MouseSensor } from '@dnd-kit/core'
+import { TouchSensor } from '@dnd-kit/core'
 
 export type ListBuilder = (
   id: string,
@@ -75,7 +77,6 @@ interface Props {
   containerItems: string[]
   handle?: boolean
   renderItem?: any
-  strategy?: SortingStrategy
   modifiers?: Modifiers
   trashable?: boolean
   vertical?: boolean
@@ -112,7 +113,6 @@ export function MultipleContainers({
   wrapperStyle = () => ({}),
   modifiers,
   renderItem,
-  strategy = verticalListSortingStrategy,
   trashable = false,
   vertical = false,
   listBuilder,
@@ -125,6 +125,8 @@ export function MultipleContainers({
   const [activeId, setActiveId] = useState<string | null>(null)
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -234,7 +236,7 @@ export function MultipleContainers({
                 index={index}
                 style={getItemStyles}
                 wrapperStyle={wrapperStyle}
-                // disabled={isDisabled(value)}
+                disabled={false}
                 renderItem={renderItem}
                 // animateLayoutChanges={animateLayoutChanges}
                 useDragOverlay={true}
@@ -242,7 +244,7 @@ export function MultipleContainers({
                   <SortableContext
                     key={containerId}
                     items={items[containerId]}
-                    strategy={strategy}
+                    strategy={verticalListSortingStrategy}
                   >
                     <DroppableItemContainer
                       id={containerId}

@@ -8,7 +8,6 @@ export type ItemBuilder = (
 ) => JSX.Element
 
 interface SortableContainerProps {
-  animateLayoutChanges?: AnimateLayoutChanges
   disabled?: boolean
   id: string
   index: number
@@ -35,7 +34,6 @@ function getItemAttributes(originalAttributes: any): object {
 
 export function SortableContainer({
   disabled,
-  animateLayoutChanges,
   id,
   index,
   onRemove,
@@ -55,12 +53,8 @@ export function SortableContainer({
     transform,
     transition,
   } = useSortable({
-    animateLayoutChanges,
     id,
-    disabled,
   })
-
-  console.log({ id, isDragging, isSorting, transform, transition })
 
   return (
     <Item
