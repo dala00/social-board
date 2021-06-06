@@ -23,7 +23,7 @@ const isDraggingSheetState = atom({
 
 type SortItemId = {
   type: string
-  id: number
+  id: string
 }
 
 export function useBoard() {
@@ -36,12 +36,12 @@ export function useBoard() {
     const parts = id.split(/-/)
     return {
       type: parts[0],
-      id: Number(parts[1]),
+      id: parts[1],
     }
   }, [])
 
   const getTask = useCallback(
-    (id: number, searchSheets?: Sheet[]) => {
+    (id: string, searchSheets?: Sheet[]) => {
       for (const sheet of searchSheets || sheets) {
         const task = sheet.tasks.find((task) => task.id === id)
         if (task) {
@@ -53,7 +53,7 @@ export function useBoard() {
   )
 
   const addTask = useCallback(
-    (sheetId: number, task: Task) => {
+    (sheetId: string, task: Task) => {
       setSheets((sheets) =>
         sheets.map((sheet) =>
           sheet.id === sheetId

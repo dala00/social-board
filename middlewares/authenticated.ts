@@ -3,8 +3,8 @@ import { getSession } from 'next-auth/client'
 import { Handler } from '../types/middleware'
 
 const authenticated =
-  (handler: Handler) => (req: NextApiRequest, res: NextApiResponse) => {
-    const session = getSession({ req })
+  (handler: Handler) => async (req: NextApiRequest, res: NextApiResponse) => {
+    const session = await getSession({ req })
     if (!session) {
       res.status(401).end()
       return

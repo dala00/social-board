@@ -1,7 +1,7 @@
 import { Task } from './Task'
 
 export type Sheet = {
-  id: number
+  id: string
   name: string
   tasks: Task[]
 }

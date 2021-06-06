@@ -1,5 +1,6 @@
 export type Task = {
-  id: number
-  sheetId: number
+  id: string
+  sheetId: string
+  name: string
   body: string
 }

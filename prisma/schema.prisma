@@ -37,6 +37,24 @@ model Session {
   user         User     @relation(fields: [userId], references: [id])
 }
 
+model Sheet {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  Task   Task[]
+}
+
+model Task {
+  id      String @id @default(cuid())
+  sheetId String
+  userId  String
+  name    String
+  body    String
+  sheet   Sheet  @relation(fields: [sheetId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -47,6 +65,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  Sheet         Sheet[]
+  Task          Task[]
 }
 
 model VerificationRequest {

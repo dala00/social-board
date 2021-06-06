@@ -29,7 +29,7 @@ export default function BoardSheet(props: Props) {
     async (name: string) => {
       const response = await axios
         .post<CreateTaskResponse>('/api/tasks/create', {
-          task: { sheetId: props.sheet.id, body: name },
+          task: { sheetId: props.sheet.id, name, body: '' },
         })
         .catch((error) => null)
       if (!response) {
