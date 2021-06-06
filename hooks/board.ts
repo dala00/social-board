@@ -52,6 +52,22 @@ export function useBoard() {
     [sheets]
   )
 
+  const addTask = useCallback(
+    (sheetId: number, task: Task) => {
+      setSheets((sheets) =>
+        sheets.map((sheet) =>
+          sheet.id === sheetId
+            ? {
+                ...sheet,
+                tasks: [task].concat(sheet.tasks),
+              }
+            : sheet
+        )
+      )
+    },
+    [sheets]
+  )
+
   const convertToMultipleContainersItems = useCallback((sheets: Sheet[]) => {
     const items: { [key: string]: string[] } = {}
 
@@ -181,6 +197,7 @@ export function useBoard() {
   }
 
   return {
+    addTask,
     clonedSheets,
     cloneSheets,
     convertToMultipleContainersItems,

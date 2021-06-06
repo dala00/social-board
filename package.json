@@ -16,6 +16,7 @@
     "@emotion/styled": "11",
     "@next-auth/prisma-adapter": "^0.4.4-canary.64",
     "@prisma/client": "^2.24.1",
+    "axios": "^0.21.1",
     "framer-motion": "4",
     "next": "10.2.0",
     "next-auth": "^3.25.0",
