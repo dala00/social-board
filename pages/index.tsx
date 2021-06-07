@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { signIn, signOut, useSession } from 'next-auth/client'
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
           <button onClick={() => signOut()}>Sign out</button>
         </>
       )}
+      <Link href="/board">board</Link>
     </div>
   )
 }

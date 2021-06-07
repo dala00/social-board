@@ -19,20 +19,20 @@ const createTask = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
-  const { task } = req.body as RequestData
+  const { task: taskData } = req.body as RequestData
   const session = await getSession({ req })
 
-  await prisma.task.create({
+  const task = await prisma.task.create({
     data: {
-      sheetId: task.sheetId,
+      sheetId: taskData.sheetId,
       userId: (session.user as { id: string }).id,
-      name: task.name,
-      body: task.body,
+      name: taskData.name,
+      body: taskData.body,
     },
   })
 
   res.status(201).json({
-    task: { id: '100', sheetId: '111', name: task.name, body: task.body },
+    task,
   })
 }
 

@@ -8,8 +8,7 @@ type Props = {
 export default function BoardCard(props: Props) {
   return (
     <Box backgroundColor="white" borderRadius={8} m={4} p={4} width={300}>
-      {props.task.name}
-      {props.task.id}({props.task.sheetId})
+      {props.task.name}({props.task.sheetId})
     </Box>
   )
 }
