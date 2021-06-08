@@ -38,21 +38,23 @@ model Session {
 }
 
 model Sheet {
-  id     String @id @default(cuid())
-  userId String
-  name   String
-  user   User   @relation(fields: [userId], references: [id])
-  tasks  Task[]
+  id           String @id @default(cuid())
+  userId       String
+  name         String
+  displayOrder Int
+  user         User   @relation(fields: [userId], references: [id])
+  tasks        Task[]
 }
 
 model Task {
-  id      String @id @default(cuid())
-  sheetId String
-  userId  String
-  name    String
-  body    String
-  sheet   Sheet  @relation(fields: [sheetId], references: [id])
-  user    User   @relation(fields: [userId], references: [id])
+  id           String @id @default(cuid())
+  sheetId      String
+  userId       String
+  name         String
+  body         String
+  displayOrder Int
+  sheet        Sheet  @relation(fields: [sheetId], references: [id])
+  user         User   @relation(fields: [userId], references: [id])
 }
 
 model User {

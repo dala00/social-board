@@ -4,6 +4,7 @@ import method from '../../../middlewares/method'
 import authenticated from '../../../middlewares/authenticated'
 import { Task } from '../../../models/Task'
 import { getUser } from '../../../lib/authentication'
+import { getNewDisplayOrder } from '../../../repositories/SheetsRepository'
 
 const prisma = new PrismaClient()
 
@@ -28,6 +29,7 @@ const createTask = async (
       userId: user.id,
       name: taskData.name,
       body: taskData.body,
+      displayOrder: await getNewDisplayOrder(user.id),
     },
   })
 
