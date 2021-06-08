@@ -1,15 +1,17 @@
 import { Box, Flex } from '@chakra-ui/layout'
-import { arrayMove } from '@dnd-kit/sortable'
+import axios from 'axios'
 import Head from 'next/head'
 import { useCallback, useEffect } from 'react'
 import BoardCard from '../components/board/BoardCard'
 import BoardSheet from '../components/board/BoardSheet'
 import { MultipleContainers } from '../components/sortable/MultipleContainers'
-import { Sortable } from '../components/sortable/Sortable'
 import { useBoard } from '../hooks/board'
 import { Sheet } from '../models/Sheet'
-import { Task } from '../models/Task'
 import styles from '../styles/Board.module.css'
+
+type SheetsResponse = {
+  sheets: Sheet[]
+}
 
 export default function Board() {
   const {
@@ -29,38 +31,13 @@ export default function Board() {
     swap,
   } = useBoard()
 
+  const initialize = useCallback(async () => {
+    const response = await axios.get<SheetsResponse>('/api/sheets')
+    setSheets(response.data.sheets)
+  }, [])
+
   useEffect(() => {
-    setSheets([
-      {
-        id: '1',
-        name: 'test',
-        tasks: [
-          { id: '1', sheetId: '1', name: 'name', body: 'aiueo' },
-          { id: '2', sheetId: '1', name: 'name', body: 'bbbbb' },
-          { id: '4', sheetId: '1', name: 'name', body: 'bbbbb' },
-          { id: '5', sheetId: '1', name: 'name', body: 'bbbbb' },
-          { id: '6', sheetId: '1', name: 'name', body: 'bbbbb' },
-          { id: '8', sheetId: '1', name: 'name', body: 'bbbbb' },
-          { id: '9', sheetId: '1', name: 'name', body: 'bbbbb' },
-        ],
-      },
-      {
-        id: '2',
-        name: 'test2',
-        tasks: [
-          { id: '3', sheetId: '2', name: 'name', body: 'aiueo' },
-          { id: '10', sheetId: '2', name: 'name', body: 'aiueo' },
-        ],
-      },
-      {
-        id: '3',
-        name: 'test3',
-        tasks: [
-          { id: '11', sheetId: '3', name: 'name', body: 'ccccc' },
-          { id: '12', sheetId: '3', name: 'name', body: 'cccccb' },
-        ],
-      },
-    ])
+    initialize()
   }, [])
 
   const onTaskDragEnd = useCallback(

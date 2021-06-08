@@ -1,7 +1,6 @@
+import { Sheet as PrismaSheet } from '.prisma/client'
 import { Task } from './Task'
 
-export type Sheet = {
-  id: string
-  name: string
+export type Sheet = PrismaSheet & {
   tasks: Task[]
 }

@@ -2,38 +2,33 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
 import method from '../../../middlewares/method'
 import authenticated from '../../../middlewares/authenticated'
-import { Task } from '../../../models/Task'
 import { getUser } from '../../../lib/authentication'
+import { Sheet } from '../../../models/Sheet'
 
 const prisma = new PrismaClient()
 
-type RequestData = {
-  task: Task
-}
-
 type ResponseData = {
-  task: Task
+  sheets: Sheet[]
 }
 
-const createTask = async (
+const sheetIndex = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
-  const { task: taskData } = req.body as RequestData
   const user = await getUser(req)
 
-  const task = await prisma.task.create({
-    data: {
-      sheetId: taskData.sheetId,
+  const sheets = await prisma.sheet.findMany({
+    where: {
       userId: user.id,
-      name: taskData.name,
-      body: taskData.body,
+    },
+    include: {
+      tasks: true,
     },
   })
 
   res.status(201).json({
-    task,
+    sheets,
   })
 }
 
-export default authenticated(method(createTask, 'POST'))
+export default authenticated(method(sheetIndex, 'GET'))

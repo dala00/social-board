@@ -1,6 +1,3 @@
-export type Task = {
-  id: string
-  sheetId: string
-  name: string
-  body: string
-}
+import { Task as PrismaTask } from '.prisma/client'
+
+export type Task = PrismaTask

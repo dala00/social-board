@@ -42,7 +42,7 @@ model Sheet {
   userId String
   name   String
   user   User   @relation(fields: [userId], references: [id])
-  Task   Task[]
+  tasks  Task[]
 }
 
 model Task {
@@ -65,8 +65,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
-  Sheet         Sheet[]
-  Task          Task[]
+  sheets        Sheet[]
+  tasks         Task[]
 }
 
 model VerificationRequest {
