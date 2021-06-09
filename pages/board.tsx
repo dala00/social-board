@@ -8,6 +8,7 @@ import { MultipleContainers } from '../components/sortable/MultipleContainers'
 import { useBoard } from '../hooks/board'
 import { Sheet } from '../models/Sheet'
 import styles from '../styles/Board.module.css'
+import { MoveTaskRequestData } from '../types/api/tasks'
 
 type SheetsResponse = {
   sheets: Sheet[]
@@ -46,11 +47,23 @@ export default function Board() {
       const task = getTask(activeItemId.id)
       const clonedTask = getTask(activeItemId.id, clonedSheets)
       if (task.sheetId !== clonedTask.sheetId) {
+        // シート移動した場合
         const newSheets = moveEndOverTask(overContainer, activeId, overId)
         setSheets(newSheets)
+        const data: MoveTaskRequestData = {
+          taskId: task.id,
+          fromSheetId: task.sheetId,
+          toSheetId: clonedTask.sheetId,
+          toTaskIds: newSheets
+            .find((sheet) => sheet.id === clonedTask.sheetId)
+            .tasks.map((t) => t.id),
+        }
+        axios.put('/api/tasks/move', data)
       } else if (activeId === overId) {
+        // ドラッグしてそのまま戻ってきた場合
         setSheets(clonedSheets)
       } else {
+        // 同じシートで並び替え
         const newSheets = swap(sheets, activeContainer, activeId, overId)
         setSheets(newSheets)
         axios.put('/api/tasks/sort', {

@@ -36,7 +36,7 @@ const createTask = async (
     orderBy: { displayOrder: 'asc' },
   })
 
-  res.status(201).json({
+  res.status(204).json({
     sheets,
   })
 }

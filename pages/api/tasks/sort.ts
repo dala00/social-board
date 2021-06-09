@@ -7,7 +7,7 @@ import { Task } from '../../../models/Task'
 
 const prisma = new PrismaClient()
 
-export type TaskSheetRequestData = {
+export type SortTaskRequestData = {
   sheetId: string
   taskIds: string[]
 }
@@ -20,7 +20,7 @@ const createTask = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
-  const { sheetId, taskIds } = req.body as TaskSheetRequestData
+  const { sheetId, taskIds } = req.body as SortTaskRequestData
   const user = await getUser(req)
 
   const updates = taskIds.map((taskId, index) =>
@@ -36,7 +36,7 @@ const createTask = async (
     orderBy: { displayOrder: 'asc' },
   })
 
-  res.status(201).json({
+  res.status(204).json({
     tasks,
   })
 }
