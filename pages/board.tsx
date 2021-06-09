@@ -53,6 +53,12 @@ export default function Board() {
       } else {
         const newSheets = swap(sheets, activeContainer, activeId, overId)
         setSheets(newSheets)
+        axios.put('/api/tasks/sort', {
+          sheetId: task.sheetId,
+          taskIds: newSheets
+            .find((sheet) => sheet.id === task.sheetId)
+            .tasks.map((t) => t.id),
+        })
       }
       setClonedSheets(null)
     },

@@ -23,7 +23,9 @@ const sheetIndex = async (
     },
     orderBy: { displayOrder: 'asc' },
     include: {
-      tasks: true,
+      tasks: {
+        orderBy: { displayOrder: 'asc' },
+      },
     },
   })
 
