@@ -99,14 +99,15 @@ export function useBoard() {
 
       const activeItemId = getSortItemId(activeId)
       const overItemId = getSortItemId(overId)
-      setSheets((sheets) =>
-        arrayMove(
-          sheets,
-          sheets.findIndex((sheet) => sheet.id === activeItemId.id),
-          sheets.findIndex((sheet) => sheet.id === overItemId.id)
-        )
+      const sortedSheets = arrayMove(
+        sheets,
+        sheets.findIndex((sheet) => sheet.id === activeItemId.id),
+        sheets.findIndex((sheet) => sheet.id === overItemId.id)
       )
+      setSheets(sortedSheets)
       setClonedSheets(null)
+
+      return sortedSheets
     },
     [sheets, clonedSheets]
   )

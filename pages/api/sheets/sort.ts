@@ -7,29 +7,38 @@ import { Sheet } from '../../../models/Sheet'
 
 const prisma = new PrismaClient()
 
+export type SortSheetRequestData = {
+  sheetIds: string[]
+}
+
 type ResponseData = {
   sheets: Sheet[]
 }
 
-const sheetIndex = async (
+const createTask = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
+  const { sheetIds } = req.body as SortSheetRequestData
   const user = await getUser(req)
 
+  const updates = sheetIds.map((sheetId, index) =>
+    prisma.sheet.update({
+      where: { id: sheetId },
+      data: { displayOrder: index },
+    })
+  )
+  await Promise.all(updates)
+
   const sheets = await prisma.sheet.findMany({
-    where: {
-      userId: user.id,
-    },
+    where: { userId: user.id },
+    include: { tasks: true },
     orderBy: { displayOrder: 'asc' },
-    include: {
-      tasks: true,
-    },
   })
 
-  res.status(200).json({
+  res.status(201).json({
     sheets,
   })
 }
 
-export default authenticated(method(sheetIndex, 'GET'))
+export default authenticated(method(createTask, 'PUT'))
