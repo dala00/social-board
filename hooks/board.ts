@@ -136,6 +136,23 @@ export function useBoard() {
     })
   }
 
+  function moveOverTaskToEmptySheet(
+    sheets: Sheet[],
+    overSheetItemId: SortItemId,
+    taskItemId: SortItemId
+  ): Sheet[] {
+    const task = getTask(taskItemId.id, sheets)
+    return sheets.map((sheet) => {
+      if (sheet.id === task.sheetId) {
+        return { ...sheet, tasks: sheet.tasks.filter((t) => t.id !== task.id) }
+      } else if (sheet.id === overSheetItemId.id) {
+        return { ...sheet, tasks: [{ ...task, sheetId: overSheetItemId.id }] }
+      } else {
+        return sheet
+      }
+    })
+  }
+
   function moveOverTask(
     sheets: Sheet[],
     activeContainer: string,
@@ -147,8 +164,14 @@ export function useBoard() {
     const overSheetItemId = getSortItemId(overContainer)
     const taskItemId = getSortItemId(active.id)
     const overItemId = getSortItemId(over.id)
+
     if (overItemId.type === 'sheet') {
-      return
+      if (taskItemId.type === 'sheet') {
+        // シートの移動なので何もしない
+        return
+      }
+      // 空のシートに移動したとき
+      return moveOverTaskToEmptySheet(sheets, overSheetItemId, taskItemId)
     }
 
     const overSheet = sheets.find((sheet) => sheet.id === overSheetItemId.id)

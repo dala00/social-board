@@ -19,7 +19,9 @@ export default function BoardSheet(props: Props) {
           <Icon as={GrDrag}></Icon>
           <Box ml={2}>{props.sheet.name}</Box>
         </Flex>
-        {props.children}
+        <Box minWidth={332} minHeight={50}>
+          {props.children}
+        </Box>
         <BoardCardAddButton sheetId={props.sheet.id} />
       </Box>
     </>
