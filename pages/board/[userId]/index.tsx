@@ -89,6 +89,9 @@ export default function Board() {
     (activeContainer, overContainer, activeId, overId) => {
       const activeItemId = getSortItemId(activeId)
       if (activeItemId.type === 'sheet') {
+        if (activeId === overId) {
+          return
+        }
         const sortedSheets = moveSheet(activeId, overId)
         axios.put('/api/sheets/sort', {
           sheetIds: sortedSheets.map((sheet) => sheet.id),
