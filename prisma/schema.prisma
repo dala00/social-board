@@ -26,6 +26,24 @@ model Account {
   @@unique([providerId, providerAccountId])
 }
 
+model Application {
+  id              String           @id @default(cuid())
+  userId          String
+  name            String
+  description     String
+  imageUrl        String
+  user            User             @relation(fields: [userId], references: [id])
+  applicationUrls ApplicationUrl[]
+}
+
+model ApplicationUrl {
+  id            BigInt      @id @default(autoincrement())
+  applicationId String
+  name          String
+  url           String
+  application   Application @relation(fields: [applicationId], references: [id])
+}
+
 model Session {
   id           String   @id @default(cuid())
   userId       String
@@ -58,17 +76,19 @@ model Task {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  uniqueId      String?       @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   accounts      Account[]
   sessions      Session[]
   sheets        Sheet[]
   tasks         Task[]
+  applications  Application[]
 }
 
 model VerificationRequest {

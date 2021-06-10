@@ -1,20 +1,27 @@
 import { Box, Flex } from '@chakra-ui/layout'
 import axios from 'axios'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useCallback, useEffect } from 'react'
-import BoardCard from '../components/board/BoardCard'
-import BoardSheet from '../components/board/BoardSheet'
-import { MultipleContainers } from '../components/sortable/MultipleContainers'
-import { useBoard } from '../hooks/board'
-import { Sheet } from '../models/Sheet'
-import styles from '../styles/Board.module.css'
-import { MoveTaskRequestData } from '../types/api/tasks'
+import BoardCard from '../../../components/board/BoardCard'
+import BoardSheet from '../../../components/board/BoardSheet'
+import { MultipleContainers } from '../../../components/sortable/MultipleContainers'
+import { useBoard } from '../../../hooks/board'
+import { Sheet } from '../../../models/Sheet'
+import styles from '../../../styles/Board.module.css'
+import { MoveTaskRequestData } from '../../../types/api/tasks'
+
+type Query = {
+  userId: string
+}
 
 type SheetsResponse = {
   sheets: Sheet[]
 }
 
 export default function Board() {
+  const router = useRouter()
+  const { userId } = router.query as Query
   const {
     clonedSheets,
     cloneSheets,
