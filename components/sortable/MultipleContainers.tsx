@@ -123,10 +123,19 @@ export function MultipleContainers({
   onDragEnd,
 }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const activationConstraint = {
+    distance: 15,
+  }
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
+    useSensor(PointerSensor, {
+      activationConstraint,
+    }),
+    useSensor(MouseSensor, {
+      activationConstraint,
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint,
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
