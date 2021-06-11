@@ -34,6 +34,7 @@ model Application {
   imageUrl        String
   user            User             @relation(fields: [userId], references: [id])
   applicationUrls ApplicationUrl[]
+  sheets          Sheet[]
 }
 
 model ApplicationUrl {
@@ -56,12 +57,14 @@ model Session {
 }
 
 model Sheet {
-  id           String @id @default(cuid())
-  userId       String
-  name         String
-  displayOrder Int
-  user         User   @relation(fields: [userId], references: [id])
-  tasks        Task[]
+  id            String      @id @default(cuid())
+  userId        String
+  applicationId String
+  name          String
+  displayOrder  Int
+  application   Application @relation(fields: [applicationId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  tasks         Task[]
 }
 
 model Task {

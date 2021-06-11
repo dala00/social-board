@@ -55,6 +55,7 @@ CREATE TABLE `Session` (
 CREATE TABLE `Sheet` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `displayOrder` INTEGER NOT NULL,
 
@@ -114,6 +115,9 @@ ALTER TABLE `ApplicationUrl` ADD FOREIGN KEY (`applicationId`) REFERENCES `Appli
 
 -- AddForeignKey
 ALTER TABLE `Session` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Sheet` ADD FOREIGN KEY (`applicationId`) REFERENCES `Application`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Sheet` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
