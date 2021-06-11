@@ -19,7 +19,7 @@ export default function Home() {
           <button onClick={() => signOut()}>Sign out</button>
         </>
       )}
-      <Link href="/board">board</Link>
+      <Link href={`/board/dala00`}>board</Link>
     </div>
   )
 }

@@ -40,13 +40,18 @@ export default function Board() {
   } = useBoard()
 
   const initialize = useCallback(async () => {
-    const response = await axios.get<SheetsResponse>('/api/sheets')
+    const response = await axios.get<SheetsResponse>(
+      `/api/users/${userId}/sheets`
+    )
     setSheets(response.data.sheets)
-  }, [])
+  }, [userId])
 
   useEffect(() => {
+    if (!userId) {
+      return
+    }
     initialize()
-  }, [])
+  }, [userId])
 
   const onTaskDragEnd = useCallback(
     (activeContainer, overContainer, activeId, overId) => {
