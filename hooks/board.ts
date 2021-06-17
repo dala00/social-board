@@ -1,13 +1,24 @@
+import { useRouter } from 'next/router'
 import { Active, Over } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useMemo } from 'react'
-import { GrTasks } from 'react-icons/gr'
 import { atom, useRecoilState } from 'recoil'
 import { Sheet } from '../models/Sheet'
 import { Task } from '../models/Task'
+import { Application } from '../models/Application'
+
+export type Query = {
+  userId: string
+  applicationId?: string
+}
 
 const sheetsState = atom<Sheet[]>({
   key: 'board/sheets',
+  default: [],
+})
+
+const applicationsState = atom<Application[]>({
+  key: 'board/applications',
   default: [],
 })
 
@@ -27,7 +38,10 @@ type SortItemId = {
 }
 
 export function useBoard() {
+  const router = useRouter()
+  const { userId, applicationId } = router.query
   const [sheets, setSheets] = useRecoilState(sheetsState)
+  const [applications, setApplications] = useRecoilState(applicationsState)
   const [clonedSheets, setClonedSheets] = useRecoilState(clonedSheetsState)
   const [isDraggingSheet, setIsDraggingSheet] =
     useRecoilState(isDraggingSheetState)
@@ -39,6 +53,11 @@ export function useBoard() {
       id: parts[1],
     }
   }, [])
+
+  const getSheet = useCallback(
+    (id: string) => sheets.find((sheet) => sheet.id === id),
+    [sheets]
+  )
 
   const getTask = useCallback(
     (id: string, searchSheets?: Sheet[]) => {
@@ -222,19 +241,24 @@ export function useBoard() {
 
   return {
     addTask,
+    applicationId,
+    applications,
     clonedSheets,
     cloneSheets,
     convertToMultipleContainersItems,
+    getSheet,
     getSortItemId,
     getTask,
     isDraggingSheet,
     moveEndOverTask,
     moveOverTask,
     moveSheet,
+    setApplications,
     setClonedSheets,
     setIsDraggingSheet,
     setSheets,
     sheets,
     swap,
+    userId,
   }
 }

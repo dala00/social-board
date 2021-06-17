@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
 import method from '../../../../middlewares/method'
 import authenticated from '../../../../middlewares/authenticated'
-import { Sheet } from '../../../../models/Sheet'
+import { UsersSheetsResponseData } from '../../../../types/api/users'
 
 const prisma = new PrismaClient()
 
@@ -10,13 +10,9 @@ type Query = {
   userId: string
 }
 
-type ResponseData = {
-  sheets: Sheet[]
-}
-
 const sheetIndex = async (
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  res: NextApiResponse<UsersSheetsResponseData>
 ) => {
   const { userId } = req.query as Query
 
@@ -36,7 +32,17 @@ const sheetIndex = async (
     },
   })
 
+  const applications = await prisma.application.findMany({
+    where: {
+      userId: user.id,
+    },
+    include: {
+      applicationUrls: true,
+    },
+  })
+
   res.status(200).json({
+    applications,
     sheets,
   })
 }

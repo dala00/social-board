@@ -65,6 +65,7 @@ CREATE TABLE `Sheet` (
 -- CreateTable
 CREATE TABLE `Task` (
     `id` VARCHAR(191) NOT NULL,
+    `applicationId` VARCHAR(191) NOT NULL,
     `sheetId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -121,6 +122,9 @@ ALTER TABLE `Sheet` ADD FOREIGN KEY (`applicationId`) REFERENCES `Application`(`
 
 -- AddForeignKey
 ALTER TABLE `Sheet` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Task` ADD FOREIGN KEY (`applicationId`) REFERENCES `Application`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Task` ADD FOREIGN KEY (`sheetId`) REFERENCES `Sheet`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

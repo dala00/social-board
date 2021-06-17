@@ -35,6 +35,7 @@ model Application {
   user            User             @relation(fields: [userId], references: [id])
   applicationUrls ApplicationUrl[]
   sheets          Sheet[]
+  tasks           Task[]
 }
 
 model ApplicationUrl {
@@ -68,14 +69,16 @@ model Sheet {
 }
 
 model Task {
-  id           String @id @default(cuid())
-  sheetId      String
-  userId       String
-  name         String
-  body         String
-  displayOrder Int
-  sheet        Sheet  @relation(fields: [sheetId], references: [id])
-  user         User   @relation(fields: [userId], references: [id])
+  id            String      @id @default(cuid())
+  applicationId String
+  sheetId       String
+  userId        String
+  name          String
+  body          String
+  displayOrder  Int
+  application   Application @relation(fields: [applicationId], references: [id])
+  sheet         Sheet       @relation(fields: [sheetId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
 }
 
 model User {
