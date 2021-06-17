@@ -15,7 +15,6 @@ import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
 
 export default function Board() {
-  const router = useRouter()
   const {
     clonedSheets,
     cloneSheets,
@@ -67,7 +66,7 @@ export default function Board() {
             .find((sheet) => sheet.id === clonedTask.sheetId)
             .tasks.map((t) => t.id),
         }
-        // axios.put('/api/tasks/move', data)
+        axios.put('/api/tasks/move', data)
       } else if (activeId === overId) {
         // ドラッグしてそのまま戻ってきた場合
         setSheets(clonedSheets)
@@ -75,12 +74,12 @@ export default function Board() {
         // 同じシートで並び替え
         const newSheets = swap(sheets, activeContainer, activeId, overId)
         setSheets(newSheets)
-        // axios.put('/api/tasks/sort', {
-        //   sheetId: task.sheetId,
-        //   taskIds: newSheets
-        //     .find((sheet) => sheet.id === task.sheetId)
-        //     .tasks.map((t) => t.id),
-        // })
+        axios.put('/api/tasks/sort', {
+          sheetId: task.sheetId,
+          taskIds: newSheets
+            .find((sheet) => sheet.id === task.sheetId)
+            .tasks.map((t) => t.id),
+        })
       }
       setClonedSheets(null)
     },
@@ -95,9 +94,9 @@ export default function Board() {
           return
         }
         const sortedSheets = moveSheet(activeId, overId)
-        // axios.put('/api/sheets/sort', {
-        //   sheetIds: sortedSheets.map((sheet) => sheet.id),
-        // })
+        axios.put('/api/sheets/sort', {
+          sheetIds: sortedSheets.map((sheet) => sheet.id),
+        })
       } else {
         onTaskDragEnd(activeContainer, overContainer, activeId, overId)
       }
