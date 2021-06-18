@@ -26,7 +26,6 @@ export default function Board() {
     moveEndOverTask,
     moveOverTask,
     moveSheet,
-    setApplications,
     setClonedSheets,
     setIsDraggingSheet,
     setSheets,
@@ -35,21 +34,6 @@ export default function Board() {
     taskId,
     userId,
   } = useBoard()
-
-  const initialize = useCallback(async () => {
-    const response = await axios.get<UsersSheetsResponseData>(
-      `/api/users/${userId}/sheets`
-    )
-    setSheets(response.data.sheets)
-    setApplications(response.data.applications)
-  }, [userId])
-
-  useEffect(() => {
-    if (!userId) {
-      return
-    }
-    initialize()
-  }, [userId])
 
   const onTaskDragEnd = useCallback(
     (activeContainer, overContainer, activeId, overId) => {
