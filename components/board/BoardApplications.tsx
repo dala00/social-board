@@ -1,31 +1,34 @@
-import { useRouter } from 'next/router'
-import { useCallback } from 'react'
+import Link from 'next/link'
+import { Box, Icon } from '@chakra-ui/react'
 import { useBoard } from '../../hooks/board'
+import BoardApplication from './BoardApplication'
+import { MdClear } from 'react-icons/md'
 
 export default function BoardApplications() {
-  const router = useRouter()
   const { applications, applicationId, userId } = useBoard()
 
-  const selectApplication = useCallback(
-    (applicationId) => {
-      router.push(`/board/${userId}/${applicationId}`)
-    },
-    [userId]
-  )
-
   return (
-    <div>
-      <a href="#" onClick={() => router.push(`/board/${userId}`)}>
-        nothing
-      </a>
-      {applications.map((application) => (
-        <div>
-          <a href="#" onClick={() => selectApplication(application.id)}>
-            {applicationId === application.id && <div>o </div>}
-            {application.name}
+    <Box height="100vh" background="rgba(0,0,0,0.2)">
+      <Box m={2}>
+        <Link href={`/board/${userId}`}>
+          <a>
+            <BoardApplication>
+              <Icon as={MdClear} />
+            </BoardApplication>
           </a>
-        </div>
+        </Link>
+      </Box>
+      {applications.map((application) => (
+        <Box m={2}>
+          <Link href={`/board/${userId}/${application.id}`}>
+            <a>
+              <BoardApplication>
+                <Box textAlign="center">{application.name}</Box>
+              </BoardApplication>
+            </a>
+          </Link>
+        </Box>
       ))}
-    </div>
+    </Box>
   )
 }
