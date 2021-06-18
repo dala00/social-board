@@ -39,7 +39,7 @@ type SortItemId = {
 
 export function useBoard() {
   const router = useRouter()
-  const [userId, applicationId] = (router.query.param || []) as string[]
+  const [userId, applicationId, taskId] = (router.query.param || []) as string[]
   const [sheets, setSheets] = useRecoilState(sheetsState)
   const [applications, setApplications] = useRecoilState(applicationsState)
   const [clonedSheets, setClonedSheets] = useRecoilState(clonedSheetsState)
@@ -259,6 +259,7 @@ export function useBoard() {
     setSheets,
     sheets,
     swap,
+    taskId,
     userId,
   }
 }

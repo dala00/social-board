@@ -19,7 +19,7 @@ export default function BoardCard(props: Props) {
 
   return (
     <Box hidden={!isOpen}>
-      <Link href={`/board/${userId}/${sheet.applicationId}/${props.task.id}`}>
+      <Link href={`/board/${userId}/${applicationId}/${props.task.id}`}>
         <Box backgroundColor="white" borderRadius={8} m={4} p={4} width={300}>
           {props.task.name}
         </Box>

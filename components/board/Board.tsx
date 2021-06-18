@@ -13,6 +13,7 @@ import { MoveTaskRequestData } from '../../types/api/tasks'
 import { MdSettingsApplications } from 'react-icons/md'
 import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
+import BoardTaskDetail from './BoardTaskDetail'
 
 export default function Board() {
   const {
@@ -31,6 +32,7 @@ export default function Board() {
     setSheets,
     sheets,
     swap,
+    taskId,
     userId,
   } = useBoard()
 
@@ -174,6 +176,7 @@ export default function Board() {
             />
           </Flex>
         </Flex>
+        {taskId && <BoardTaskDetail />}
       </Box>
     </>
   )
