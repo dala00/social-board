@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, useColorModeValue } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
 import { useBoard } from '../../hooks/board'
@@ -11,7 +11,7 @@ export default function BoardApplication({ children }) {
       border="1px"
       borderColor="grey.100"
       borderRadius={4}
-      background="whiteAlpha.800"
+      background={useColorModeValue('whiteAlpha.800', 'whiteAlpha.400')}
       display="grid"
       placeItems="center"
       width={size}

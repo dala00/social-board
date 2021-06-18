@@ -3,6 +3,7 @@ import { Box } from '@chakra-ui/layout'
 import { Task } from '../../models/Task'
 import { useBoard } from '../../hooks/board'
 import { useMemo } from 'react'
+import { useColorModeValue } from '@chakra-ui/react'
 
 type Props = {
   task: Task
@@ -22,7 +23,13 @@ export default function BoardCard(props: Props) {
       <Link
         href={`/board/${userId}/${props.task.applicationId}/${props.task.id}`}
       >
-        <Box backgroundColor="white" borderRadius={8} m={4} p={4} width={300}>
+        <Box
+          backgroundColor={useColorModeValue('white', 'gray.700')}
+          borderRadius={8}
+          m={4}
+          p={4}
+          width={300}
+        >
           {props.task.name}
         </Box>
       </Link>

@@ -1,31 +1,11 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  Input,
-  ModalFooter,
-  Button,
-  Box,
-  Flex,
-} from '@chakra-ui/react'
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
 import { useBoard } from '../../hooks/board'
-import sheets from '../../pages/api/users/[userId]/sheets'
-import styles from '../../styles/Board.module.css'
-import { MultipleContainers } from '../sortable/MultipleContainers'
 import BoardApplications from './BoardApplications'
-import BoardCard from './BoardCard'
-import BoardSheet from './BoardSheet'
 
 export default function BoardTaskDetail() {
-  const router = useRouter()
   const { userId, applicationId, taskId, getTask } = useBoard()
   const task = useMemo(() => getTask(taskId), [taskId])
 
@@ -37,10 +17,10 @@ export default function BoardTaskDetail() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box as="main" className={styles.main} backgroundColor="blue.100">
+      <Box as="main" backgroundColor={useColorModeValue('gray.50', undefined)}>
         <Flex>
           <BoardApplications />
-          <Box>{task.name}</Box>
+          <Box p={4}>{task.name}</Box>
         </Flex>
       </Box>
     </>

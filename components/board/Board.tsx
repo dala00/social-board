@@ -14,6 +14,7 @@ import { MdSettingsApplications } from 'react-icons/md'
 import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
 import BoardTaskDetail from './BoardTaskDetail'
+import { useColorModeValue } from '@chakra-ui/react'
 
 export default function Board() {
   const {
@@ -99,7 +100,11 @@ export default function Board() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box as="main" className={styles.main} backgroundColor="blue.100">
+      <Box
+        as="main"
+        className={styles.main}
+        backgroundColor={useColorModeValue('blue.100', undefined)}
+      >
         <Flex>
           <BoardApplications />
           <Flex p={4}>
