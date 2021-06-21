@@ -3,9 +3,9 @@ import {
   Button,
   Flex,
   FormControl,
-  Heading,
   IconButton,
-  Input,
+  Text,
+  Textarea,
 } from '@chakra-ui/react'
 import axios from 'axios'
 import React, { useMemo, useState } from 'react'
@@ -14,15 +14,15 @@ import { MdEdit } from 'react-icons/md'
 import { useAuthentication } from '../../../hooks/authentication'
 import { useBoard } from '../../../hooks/board'
 
-export default function BoardTaskName() {
+export default function BoardTaskBody() {
   const { userId, taskId, getTask, updateTask, sheets } = useBoard()
   const { currentUser } = useAuthentication()
   const task = useMemo(() => getTask(taskId), [taskId, sheets])
   const [isEditing, setIsEditing] = useState(false)
-  const [name, setName] = useState('')
+  const [body, setBody] = useState('')
 
   const startEdit = useCallback(() => {
-    setName(task.name)
+    setBody(task.body)
     setIsEditing(true)
   }, [task])
 
@@ -30,56 +30,55 @@ export default function BoardTaskName() {
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
       setIsEditing(false)
-      if (name === task.name) {
+      if (body === task.body) {
         return
       }
 
-      updateTask(taskId, { ...task, name })
+      updateTask(taskId, { ...task, body })
       axios
-        .patch(`/api/tasks/${taskId}/update-name`, { name })
+        .patch(`/api/tasks/${taskId}/update-body`, { body })
         .catch((_) => null)
     },
-    [task, name]
+    [task, body]
   )
 
   if (!isEditing) {
     return (
-      <Heading>
-        <Box display="inline-block" mr={2}>
-          {task.name}
-        </Box>
+      <Box>
+        <Text display="inline-block" mr={2} whiteSpace="pre">
+          {task.body}
+        </Text>
         {currentUser?.uniqueId === userId && (
-          <IconButton
-            aria-label="Edit"
-            icon={<MdEdit />}
-            isRound={true}
-            onClick={startEdit}
-          />
+          <Box mt={2}>
+            <Button aria-label="Edit Body" onClick={startEdit}>
+              編集する
+            </Button>
+          </Box>
         )}
-      </Heading>
+      </Box>
     )
   } else {
     return (
       <form onSubmit={save}>
         <FormControl id="email">
-          <Flex width="100%" maxWidth={500}>
-            <Input
-              type="text"
-              placeholder="タスク名"
+          <Box width="100%" maxWidth={700}>
+            <Textarea
+              placeholder="内容"
               width="100%"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              rows={10}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
               required
             />
             <Button
               colorScheme="blue"
               type="submit"
               ml={2}
-              disabled={name.trim() === ''}
+              disabled={body.trim() === ''}
             >
               Submit
             </Button>
-          </Flex>
+          </Box>
         </FormControl>
       </form>
     )

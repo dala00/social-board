@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
 import { useBoard } from '../../../hooks/board'
 import BoardApplications from '../BoardApplications'
+import BoardTaskBody from './BoardTaskBody'
 import BoardTaskName from './BoardTaskName'
 
 export default function BoardTaskDetail() {
@@ -26,7 +27,10 @@ export default function BoardTaskDetail() {
         <Flex>
           <BoardApplications />
           <Box p={4} width="100%">
-            <BoardTaskName />
+            <Box mb={6}>
+              <BoardTaskName />
+            </Box>
+            <BoardTaskBody />
           </Box>
         </Flex>
       </Box>
