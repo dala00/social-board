@@ -13,7 +13,7 @@ import { MoveTaskRequestData } from '../../types/api/tasks'
 import { MdSettingsApplications } from 'react-icons/md'
 import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
-import BoardTaskDetail from './BoardTaskDetail'
+import BoardTask from './task/BoardTask'
 import { useColorModeValue } from '@chakra-ui/react'
 
 export default function Board() {
@@ -53,7 +53,7 @@ export default function Board() {
             .find((sheet) => sheet.id === clonedTask.sheetId)
             .tasks.map((t) => t.id),
         }
-        axios.put('/api/tasks/move', data)
+        axios.patch('/api/tasks/move', data)
       } else if (activeId === overId) {
         // ドラッグしてそのまま戻ってきた場合
         setSheets(clonedSheets)
@@ -61,7 +61,7 @@ export default function Board() {
         // 同じシートで並び替え
         const newSheets = swap(sheets, activeContainer, activeId, overId)
         setSheets(newSheets)
-        axios.put('/api/tasks/sort', {
+        axios.patch('/api/tasks/sort', {
           sheetId: task.sheetId,
           taskIds: newSheets
             .find((sheet) => sheet.id === task.sheetId)
@@ -81,7 +81,7 @@ export default function Board() {
           return
         }
         const sortedSheets = moveSheet(activeId, overId)
-        axios.put('/api/sheets/sort', {
+        axios.patch('/api/sheets/sort', {
           sheetIds: sortedSheets.map((sheet) => sheet.id),
         })
       } else {
@@ -165,7 +165,7 @@ export default function Board() {
             />
           </Flex>
         </Flex>
-        {taskId && <BoardTaskDetail />}
+        {taskId && <BoardTask />}
       </Box>
     </>
   )

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { Active, Over } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { Sheet } from '../models/Sheet'
 import { Task } from '../models/Task'
@@ -82,6 +82,28 @@ export function useBoard() {
               }
             : sheet
         )
+      )
+    },
+    [sheets]
+  )
+
+  const updateTask = useCallback(
+    (id: string, task: Task) => {
+      setSheets((sheets) =>
+        sheets.map((sheet) => {
+          if (sheet.id != task.sheetId) {
+            return sheet
+          }
+          return {
+            ...sheet,
+            tasks: sheet.tasks.map((t) => {
+              if (t.id !== id) {
+                return t
+              }
+              return task
+            }),
+          }
+        })
       )
     },
     [sheets]
@@ -260,6 +282,7 @@ export function useBoard() {
     sheets,
     swap,
     taskId,
+    updateTask,
     userId,
   }
 }

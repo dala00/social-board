@@ -17,7 +17,7 @@ export default NextAuth({
     session: async (session, user) => {
       return Promise.resolve({
         session,
-        user: { ...session.user, id: user.id },
+        user: { ...session.user, id: user.id, uniqueId: user.uniqueId },
       })
     },
   },

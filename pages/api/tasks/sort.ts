@@ -41,4 +41,4 @@ const createTask = async (
   })
 }
 
-export default authenticated(method(createTask, 'PUT'))
+export default authenticated(method(createTask, 'PATCH'))

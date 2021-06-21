@@ -2,12 +2,17 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
-import { useBoard } from '../../hooks/board'
-import BoardApplications from './BoardApplications'
+import { useBoard } from '../../../hooks/board'
+import BoardApplications from '../BoardApplications'
+import BoardTaskName from './BoardTaskName'
 
 export default function BoardTaskDetail() {
   const { userId, applicationId, taskId, getTask } = useBoard()
   const task = useMemo(() => getTask(taskId), [taskId])
+
+  if (!task) {
+    return <></>
+  }
 
   return (
     <>
@@ -20,7 +25,9 @@ export default function BoardTaskDetail() {
       <Box as="main" backgroundColor={useColorModeValue('gray.50', undefined)}>
         <Flex>
           <BoardApplications />
-          <Box p={4}>{task.name}</Box>
+          <Box p={4} width="100%">
+            <BoardTaskName />
+          </Box>
         </Flex>
       </Box>
     </>

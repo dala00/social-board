@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useCallback } from 'react'
 import Board from '../../components/board/Board'
-import BoardTaskDetail from '../../components/board/BoardTaskDetail'
+import BoardTaskDetail from '../../components/board/task/BoardTask'
 import { useBoard } from '../../hooks/board'
 import { UsersSheetsResponseData } from '../../types/api/users'
 
