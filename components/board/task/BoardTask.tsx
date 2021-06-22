@@ -1,4 +1,4 @@
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react'
+import { Box, Divider, Flex, useColorModeValue } from '@chakra-ui/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
@@ -23,14 +23,25 @@ export default function BoardTaskDetail() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box as="main" backgroundColor={useColorModeValue('gray.50', undefined)}>
+      <Box as="main" backgroundColor={useColorModeValue('blue.100', undefined)}>
         <Flex>
           <BoardApplications />
           <Box p={4} width="100%">
-            <Box mb={6}>
+            <Box mb={4}>
               <BoardTaskName />
             </Box>
-            <BoardTaskBody />
+
+            <Divider borderColor={useColorModeValue('gray.700', 'gray.200')} />
+
+            <Box
+              background={useColorModeValue('white', 'gray.900')}
+              borderRadius={10}
+              maxWidth={700}
+              mt={4}
+              p={4}
+            >
+              <BoardTaskBody />
+            </Box>
           </Box>
         </Flex>
       </Box>

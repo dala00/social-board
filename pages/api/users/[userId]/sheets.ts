@@ -42,6 +42,7 @@ const sheetIndex = async (
   })
 
   res.status(200).json({
+    user,
     applications,
     sheets,
   })

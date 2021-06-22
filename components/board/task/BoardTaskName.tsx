@@ -45,7 +45,7 @@ export default function BoardTaskName() {
   if (!isEditing) {
     return (
       <Heading>
-        <Box display="inline-block" mr={2}>
+        <Box display="inline-block" mr={4}>
           {task.name}
         </Box>
         {currentUser?.uniqueId === userId && (
@@ -62,7 +62,7 @@ export default function BoardTaskName() {
     return (
       <form onSubmit={save}>
         <FormControl id="email">
-          <Flex width="100%" maxWidth={500}>
+          <Flex width="100%" maxWidth={500} alignItems="center">
             <Input
               type="text"
               placeholder="タスク名"

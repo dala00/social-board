@@ -7,13 +7,14 @@ import { useBoard } from '../../hooks/board'
 import { UsersSheetsResponseData } from '../../types/api/users'
 
 export default function BoardPage() {
-  const { setApplications, setSheets, taskId, applicationId, userId } =
+  const { setApplications, setSheets, taskId, applicationId, setUser, userId } =
     useBoard()
 
   const initialize = useCallback(async () => {
     const response = await axios.get<UsersSheetsResponseData>(
       `/api/users/${userId}/sheets`
     )
+    setUser(response.data.user)
     setSheets(response.data.sheets)
     setApplications(response.data.applications)
   }, [userId])

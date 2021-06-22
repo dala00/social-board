@@ -6,6 +6,7 @@ import { atom, useRecoilState } from 'recoil'
 import { Sheet } from '../models/Sheet'
 import { Task } from '../models/Task'
 import { Application } from '../models/Application'
+import { User } from '../models/User'
 
 export type Query = {
   userId: string
@@ -20,6 +21,11 @@ const sheetsState = atom<Sheet[]>({
 const applicationsState = atom<Application[]>({
   key: 'board/applications',
   default: [],
+})
+
+const userState = atom<User>({
+  key: 'board/user',
+  default: { id: '' } as User,
 })
 
 const clonedSheetsState = atom<Sheet[] | null>({
@@ -42,6 +48,7 @@ export function useBoard() {
   const [userId, applicationId, taskId] = (router.query.param || []) as string[]
   const [sheets, setSheets] = useRecoilState(sheetsState)
   const [applications, setApplications] = useRecoilState(applicationsState)
+  const [user, setUser] = useRecoilState(userState)
   const [clonedSheets, setClonedSheets] = useRecoilState(clonedSheetsState)
   const [isDraggingSheet, setIsDraggingSheet] =
     useRecoilState(isDraggingSheetState)
@@ -107,6 +114,11 @@ export function useBoard() {
       )
     },
     [sheets]
+  )
+
+  const getApplication = useCallback(
+    (id) => applications.find((application) => application.id === id),
+    [applications]
   )
 
   const convertToMultipleContainersItems = useCallback((sheets: Sheet[]) => {
@@ -268,6 +280,7 @@ export function useBoard() {
     clonedSheets,
     cloneSheets,
     convertToMultipleContainersItems,
+    getApplication,
     getSheet,
     getSortItemId,
     getTask,
@@ -279,10 +292,12 @@ export function useBoard() {
     setClonedSheets,
     setIsDraggingSheet,
     setSheets,
+    setUser,
     sheets,
     swap,
     taskId,
     updateTask,
+    user,
     userId,
   }
 }
