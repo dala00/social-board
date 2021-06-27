@@ -1,6 +1,8 @@
 import { Provider } from 'next-auth/client'
 import { ChakraProvider } from '@chakra-ui/react'
 import { RecoilRoot } from 'recoil'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
@@ -9,6 +11,17 @@ function MyApp({ Component, pageProps }) {
       <RecoilRoot>
         <ChakraProvider>
           <Component {...pageProps} />
+          <ToastContainer
+            position="bottom-left"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </ChakraProvider>
       </RecoilRoot>
     </Provider>

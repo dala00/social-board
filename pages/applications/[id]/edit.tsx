@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
 import { useAuthentication } from '../../../hooks/authentication'
@@ -52,6 +53,7 @@ export default function ApplicationEditPage() {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
       await axios.patch(`/api/applications/${id}/update`, application)
+      toast.success('更新しました。')
       router.push(`/board/${currentUser.uniqueId}/${id}`)
     },
     [application]
