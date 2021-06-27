@@ -22,7 +22,12 @@ export default function BoardHeader() {
           {application.name}
           {currentUser.id === user.id && (
             <Link href={`/applications/${application.id}/edit`}>
-              <IconButton aria-label="Edit" icon={<MdEdit />} isRound={true} />
+              <IconButton
+                aria-label="Edit"
+                icon={<MdEdit />}
+                isRound={true}
+                ml={2}
+              />
             </Link>
           )}
         </Box>
