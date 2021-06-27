@@ -4,6 +4,7 @@ import {
   Center,
   FormControl,
   FormLabel,
+  Image,
   Input,
   Spinner,
   Textarea,
@@ -17,6 +18,7 @@ import { toast } from 'react-toastify'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
 import { useAuthentication } from '../../../hooks/authentication'
+import { useFormImage } from '../../../hooks/form/image'
 import { Application } from '../../../models/Application'
 
 type Query = {
@@ -33,6 +35,11 @@ export default function ApplicationEditPage() {
   const { id } = router.query as Query
   const { application, setApplication } = useApplicationForm()
   const [loading, setLoading] = useState(true)
+  const {
+    url: iconImageUrl,
+    file: iconFile,
+    onChange: onIconImageChanged,
+  } = useFormImage()
 
   const initialize = useCallback(async () => {
     if (!id) {
@@ -52,11 +59,19 @@ export default function ApplicationEditPage() {
   const save = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      await axios.patch(`/api/applications/${id}/update`, application)
+      const form = new FormData()
+      form.append('name', application.name)
+      form.append('description', application.description)
+      form.append('icon', iconFile)
+      await axios.patch(`/api/applications/${id}/update`, form, {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      })
       toast.success('更新しました。')
       router.push(`/board/${currentUser.uniqueId}/${id}`)
     },
-    [application]
+    [application, iconImageUrl, iconFile]
   )
 
   return (
@@ -89,6 +104,13 @@ export default function ApplicationEditPage() {
               }
               required
             />
+          </FormControl>
+          <FormControl id="image">
+            <FormLabel>アイコンファイル</FormLabel>
+            <Input type="file" accept="image/*" onChange={onIconImageChanged} />
+            <Box>
+              <Image src={iconImageUrl} />
+            </Box>
           </FormControl>
           <Box mt={4} textAlign="center">
             <Button colorScheme="blue" type="submit" ml={2}>
