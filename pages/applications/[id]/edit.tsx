@@ -15,11 +15,12 @@ import React, { useCallback } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
+import FormImagePreview from '../../../components/form/FormImagePreview'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
 import { useAuthentication } from '../../../hooks/authentication'
 import { useFormImage } from '../../../hooks/form/image'
-import { Application } from '../../../models/Application'
+import { Application, getIconUrl } from '../../../models/Application'
 
 type Query = {
   id: string
@@ -107,10 +108,24 @@ export default function ApplicationEditPage() {
           </FormControl>
           <FormControl id="image">
             <FormLabel>アイコンファイル</FormLabel>
-            <Input type="file" accept="image/*" onChange={onIconImageChanged} />
             <Box>
-              <Image src={iconImageUrl} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={onIconImageChanged}
+              />
             </Box>
+            <FormImagePreview
+              imageUrl={iconImageUrl}
+              currentImageUrl={
+                application.iconFileName === ''
+                  ? undefined
+                  : getIconUrl(application)
+              }
+              width={24}
+              height={24}
+              mt={2}
+            />
           </FormControl>
           <Box mt={4} textAlign="center">
             <Button colorScheme="blue" type="submit" ml={2}>

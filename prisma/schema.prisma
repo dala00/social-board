@@ -31,7 +31,8 @@ model Application {
   userId          String
   name            String
   description     String
-  imageUrl        String
+  iconFileName    String
+  imageFileName   String
   user            User             @relation(fields: [userId], references: [id])
   applicationUrls ApplicationUrl[]
   sheets          Sheet[]
