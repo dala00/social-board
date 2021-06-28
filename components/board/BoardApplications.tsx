@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { Box, Button, Icon, useColorMode } from '@chakra-ui/react'
+import { Box, Button, Icon, Image, useColorMode } from '@chakra-ui/react'
 import { useBoard } from '../../hooks/board'
 import BoardApplication from './BoardApplication'
 import { MdClear } from 'react-icons/md'
+import { getIconUrl } from '../../models/Application'
 
 export default function BoardApplications() {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -24,7 +25,11 @@ export default function BoardApplications() {
           <Link href={`/board/${userId}/${application.id}`}>
             <a>
               <BoardApplication>
-                <Box textAlign="center">{application.name}</Box>
+                {application.iconFileName === '' ? (
+                  <Box textAlign="center">{application.name}</Box>
+                ) : (
+                  <Image src={getIconUrl(application)} />
+                )}
               </BoardApplication>
             </a>
           </Link>

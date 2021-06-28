@@ -1,9 +1,16 @@
-import { Box, Flex, IconButton, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Flex,
+  IconButton,
+  Image,
+  useColorModeValue,
+} from '@chakra-ui/react'
 import Link from 'next/link'
 import React from 'react'
 import { MdEdit } from 'react-icons/md'
 import { useAuthentication } from '../../hooks/authentication'
 import { useBoard } from '../../hooks/board'
+import { getIconUrl } from '../../models/Application'
 
 export default function BoardHeader() {
   const { applicationId, getApplication, user } = useBoard()
@@ -18,7 +25,16 @@ export default function BoardHeader() {
     >
       <Box>{user.name}</Box>
       {application && (
-        <Box ml={4}>
+        <Flex alignItems="center" ml={4}>
+          {application.iconFileName !== '' && (
+            <Image
+              src={getIconUrl(application)}
+              width={8}
+              height={8}
+              mr={2}
+              borderRadius={4}
+            />
+          )}
           {application.name}
           {currentUser.id === user.id && (
             <Link href={`/applications/${application.id}/edit`}>
@@ -30,7 +46,7 @@ export default function BoardHeader() {
               />
             </Link>
           )}
-        </Box>
+        </Flex>
       )}
     </Flex>
   )
