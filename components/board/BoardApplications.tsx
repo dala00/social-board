@@ -1,12 +1,11 @@
 import Link from 'next/link'
-import { Box, Button, Icon, Image, useColorMode } from '@chakra-ui/react'
+import { Box, Icon, Image } from '@chakra-ui/react'
 import { useBoard } from '../../hooks/board'
 import BoardApplication from './BoardApplication'
 import { MdClear } from 'react-icons/md'
 import { getIconUrl } from '../../models/Application'
 
 export default function BoardApplications() {
-  const { colorMode, toggleColorMode } = useColorMode()
   const { applications, applicationId, userId } = useBoard()
 
   return (
@@ -35,7 +34,6 @@ export default function BoardApplications() {
           </Link>
         </Box>
       ))}
-      <Button onClick={toggleColorMode}>Toggle</Button>
     </Box>
   )
 }
