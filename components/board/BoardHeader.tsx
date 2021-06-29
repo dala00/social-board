@@ -22,6 +22,7 @@ export default function BoardHeader() {
       alignItems="center"
       background={useColorModeValue('gray.100', 'gray.700')}
       padding={2}
+      height={14}
     >
       <Box>{user.name}</Box>
       {application && (

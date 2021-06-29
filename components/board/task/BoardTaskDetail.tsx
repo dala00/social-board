@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
 import { useBoard } from '../../../hooks/board'
 import BoardApplications from '../BoardApplications'
+import BoardHeader from '../BoardHeader'
 import BoardTaskBody from './BoardTaskBody'
 import BoardTaskName from './BoardTaskName'
 
@@ -24,6 +25,7 @@ export default function BoardTaskDetail() {
       </Head>
 
       <Box as="main" backgroundColor={useColorModeValue('blue.100', undefined)}>
+        <BoardHeader />
         <Flex>
           <BoardApplications />
           <Box p={4} width="100%">

@@ -13,7 +13,6 @@ import { MoveTaskRequestData } from '../../types/api/tasks'
 import { MdSettingsApplications } from 'react-icons/md'
 import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
-import BoardTask from './task/BoardTask'
 import { useColorModeValue } from '@chakra-ui/react'
 import BoardHeader from './BoardHeader'
 
@@ -107,71 +106,79 @@ export default function Board() {
         backgroundColor={useColorModeValue('blue.100', undefined)}
       >
         <BoardHeader />
-        <Flex>
-          <BoardApplications />
-          <Box width="100%">
-            <Flex p={4}>
-              <MultipleContainers
-                containerItems={sheets.map(
-                  (sheet) => `sheet-${sheet.id.toString()}`
-                )}
-                items={convertToMultipleContainersItems(clonedSheets || sheets)}
-                listBuilder={(sheetId, listeners, children) => {
-                  const sortItemId = getSortItemId(sheetId)
-                  const sheet = sheets.find(
-                    (sheet) => sheet.id === sortItemId.id
-                  )
-                  return (
-                    <BoardSheet
-                      key={sheetId}
-                      sheet={sheet}
-                      listeners={listeners}
-                      children={
-                        clonedSheets !== null && isDraggingSheet
-                          ? sheet.tasks.map((task) => (
-                              <BoardCard key={task.id} task={task} />
-                            ))
-                          : children
-                      }
-                    />
-                  )
-                }}
-                itemBuilder={(taskId, listeners) => {
-                  const sortItemId = getSortItemId(taskId)
-                  const task = getTask(sortItemId.id)
-                  return <BoardCard key={task.id} task={task} />
-                }}
-                onDragStart={(activeId) => {
-                  setIsDraggingSheet(/^sheet/.test(activeId))
-                  cloneSheets()
-                }}
-                onDragCancel={() => {
-                  setClonedSheets(null)
-                  setIsDraggingSheet(false)
-                }}
-                onDragOver={(activeContainer, overContainer, active, over) => {
-                  if (!clonedSheets) {
-                    return
-                  }
-
-                  const newSheets = moveOverTask(
-                    clonedSheets,
+        {!taskId && (
+          <Flex>
+            <BoardApplications />
+            <Box width="100%">
+              <Flex p={4}>
+                <MultipleContainers
+                  containerItems={sheets.map(
+                    (sheet) => `sheet-${sheet.id.toString()}`
+                  )}
+                  items={convertToMultipleContainersItems(
+                    clonedSheets || sheets
+                  )}
+                  listBuilder={(sheetId, listeners, children) => {
+                    const sortItemId = getSortItemId(sheetId)
+                    const sheet = sheets.find(
+                      (sheet) => sheet.id === sortItemId.id
+                    )
+                    return (
+                      <BoardSheet
+                        key={sheetId}
+                        sheet={sheet}
+                        listeners={listeners}
+                        children={
+                          clonedSheets !== null && isDraggingSheet
+                            ? sheet.tasks.map((task) => (
+                                <BoardCard key={task.id} task={task} />
+                              ))
+                            : children
+                        }
+                      />
+                    )
+                  }}
+                  itemBuilder={(taskId, listeners) => {
+                    const sortItemId = getSortItemId(taskId)
+                    const task = getTask(sortItemId.id)
+                    return <BoardCard key={task.id} task={task} />
+                  }}
+                  onDragStart={(activeId) => {
+                    setIsDraggingSheet(/^sheet/.test(activeId))
+                    cloneSheets()
+                  }}
+                  onDragCancel={() => {
+                    setClonedSheets(null)
+                    setIsDraggingSheet(false)
+                  }}
+                  onDragOver={(
                     activeContainer,
                     overContainer,
                     active,
                     over
-                  )
-                  if (!newSheets) {
-                    return
-                  }
-                  setClonedSheets(newSheets)
-                }}
-                onDragEnd={onDragEnd}
-              />
-            </Flex>
-          </Box>
-        </Flex>
-        {taskId && <BoardTask />}
+                  ) => {
+                    if (!clonedSheets) {
+                      return
+                    }
+
+                    const newSheets = moveOverTask(
+                      clonedSheets,
+                      activeContainer,
+                      overContainer,
+                      active,
+                      over
+                    )
+                    if (!newSheets) {
+                      return
+                    }
+                    setClonedSheets(newSheets)
+                  }}
+                  onDragEnd={onDragEnd}
+                />
+              </Flex>
+            </Box>
+          </Flex>
+        )}
       </Box>
     </>
   )
