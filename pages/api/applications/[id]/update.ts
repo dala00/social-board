@@ -5,12 +5,14 @@ import authenticated from '../../../../middlewares/authenticated'
 import { getUser } from '../../../../lib/authentication'
 import multipartFormData from '../../../../middlewares/multipartFormData'
 import { generateUniqueFileName, upload } from '../../../../lib/server/storage'
+import { ApplicationUrl } from '../../../../models/ApplicationUrl'
 
 const prisma = new PrismaClient()
 
 export type UpdateApplicationRequestData = {
   name: string
   description: string
+  newApplicationUrls: ApplicationUrl[]
 }
 
 type Query = {
@@ -26,7 +28,8 @@ const updateApplication = async (
   res: NextApiResponse<ResponseData>
 ) => {
   multipartFormData(req, res, async (req, res) => {
-    const { name, description } = req.body as UpdateApplicationRequestData
+    const { name, description, newApplicationUrls } =
+      req.body as UpdateApplicationRequestData
     const { id } = req.query as Query
     const user = await getUser(req)
 
@@ -44,6 +47,16 @@ const updateApplication = async (
       where: { id, userId: user.id },
       data,
     })
+
+    for (const applicationUrl of newApplicationUrls) {
+      await prisma.applicationUrl.create({
+        data: {
+          applicationId: id,
+          name: applicationUrl.name,
+          url: applicationUrl.url,
+        },
+      })
+    }
 
     res.status(204).json({
       result: true,

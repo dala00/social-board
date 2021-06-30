@@ -29,7 +29,7 @@ CREATE TABLE `Application` (
 
 -- CreateTable
 CREATE TABLE `ApplicationUrl` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `applicationId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `url` VARCHAR(191) NOT NULL,

@@ -15,6 +15,7 @@ import React, { useCallback } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
+import ApplicationEditUrls from '../../../components/application/ApplicationEditUrls'
 import FormImagePreview from '../../../components/form/FormImagePreview'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
@@ -34,7 +35,8 @@ export default function ApplicationEditPage() {
   const router = useRouter()
   const { currentUser } = useAuthentication()
   const { id } = router.query as Query
-  const { application, setApplication } = useApplicationForm()
+  const { application, setApplication, newApplicationUrls } =
+    useApplicationForm()
   const [loading, setLoading] = useState(true)
   const {
     url: iconImageUrl,
@@ -64,6 +66,14 @@ export default function ApplicationEditPage() {
       form.append('name', application.name)
       form.append('description', application.description)
       form.append('icon', iconFile)
+      newApplicationUrls.forEach((applicationUrl, index) => {
+        if (applicationUrl.url.trim() === '') {
+          return
+        }
+
+        form.append(`newApplicationUrls[${index}][name]`, applicationUrl.name)
+        form.append(`newApplicationUrls[${index}][url]`, applicationUrl.url)
+      })
       await axios.patch(`/api/applications/${id}/update`, form, {
         headers: {
           'content-type': 'multipart/form-data',
@@ -72,7 +82,7 @@ export default function ApplicationEditPage() {
       toast.success('更新しました。')
       router.push(`/board/${currentUser.uniqueId}/${id}`)
     },
-    [application, iconImageUrl, iconFile]
+    [application, iconImageUrl, iconFile, newApplicationUrls]
   )
 
   return (
@@ -127,8 +137,11 @@ export default function ApplicationEditPage() {
               mt={2}
             />
           </FormControl>
+          <Box mt={4}>
+            <ApplicationEditUrls />
+          </Box>
           <Box mt={4} textAlign="center">
-            <Button colorScheme="blue" type="submit" ml={2}>
+            <Button colorScheme="blue" type="submit" mt={2}>
               更新する
             </Button>
           </Box>
