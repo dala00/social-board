@@ -12,6 +12,7 @@ const prisma = new PrismaClient()
 export type UpdateApplicationRequestData = {
   name: string
   description: string
+  applicationUrls: ApplicationUrl[]
   newApplicationUrls: ApplicationUrl[]
 }
 
@@ -28,8 +29,12 @@ const updateApplication = async (
   res: NextApiResponse<ResponseData>
 ) => {
   multipartFormData(req, res, async (req, res) => {
-    const { name, description, newApplicationUrls } =
-      req.body as UpdateApplicationRequestData
+    const {
+      name,
+      description,
+      applicationUrls,
+      newApplicationUrls = [],
+    } = req.body as UpdateApplicationRequestData
     const { id } = req.query as Query
     const user = await getUser(req)
 
@@ -48,12 +53,25 @@ const updateApplication = async (
       data,
     })
 
+    const updates = applicationUrls.map((applicationUrl) => {
+      const { name, url } = applicationUrl
+      return prisma.applicationUrl.updateMany({
+        where: { id: applicationUrl.id, applicationId: id },
+        data: {
+          name,
+          url,
+        },
+      })
+    })
+    await Promise.all(updates)
+
     for (const applicationUrl of newApplicationUrls) {
+      const { name, url } = applicationUrl
       await prisma.applicationUrl.create({
         data: {
           applicationId: id,
-          name: applicationUrl.name,
-          url: applicationUrl.url,
+          name,
+          url,
         },
       })
     }

@@ -40,11 +40,29 @@ export function useApplicationForm() {
     [newApplicationUrls]
   )
 
+  const setApplicationUrl = useCallback(
+    (index: number, applicationUrl: ApplicationUrl) => {
+      setApplication({
+        ...application,
+        applicationUrls: application.applicationUrls.map(
+          (currentApplicationUrl, currentIndex) => {
+            if (currentIndex === index) {
+              return applicationUrl
+            }
+            return currentApplicationUrl
+          }
+        ),
+      })
+    },
+    [application]
+  )
+
   return {
     addNewApplicationUrl,
     application,
     newApplicationUrls,
     setApplication,
+    setApplicationUrl,
     setNewApplicationUrl,
   }
 }

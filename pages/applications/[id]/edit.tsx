@@ -66,6 +66,11 @@ export default function ApplicationEditPage() {
       form.append('name', application.name)
       form.append('description', application.description)
       form.append('icon', iconFile)
+      application.applicationUrls.forEach((applicationUrl, index) => {
+        form.append(`applicationUrls[${index}][id]`, applicationUrl.id)
+        form.append(`applicationUrls[${index}][name]`, applicationUrl.name)
+        form.append(`applicationUrls[${index}][url]`, applicationUrl.url)
+      })
       newApplicationUrls.forEach((applicationUrl, index) => {
         if (applicationUrl.url.trim() === '') {
           return

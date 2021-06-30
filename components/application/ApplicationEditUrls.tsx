@@ -4,12 +4,26 @@ import { useApplicationForm } from '../../hooks/application/application_form'
 import ApplicationEditUrl from './ApplicationEditUrl'
 
 export default function ApplicationEditUrls() {
-  const { newApplicationUrls, addNewApplicationUrl, setNewApplicationUrl } =
-    useApplicationForm()
+  const {
+    application,
+    setApplicationUrl,
+    newApplicationUrls,
+    addNewApplicationUrl,
+    setNewApplicationUrl,
+  } = useApplicationForm()
 
   return (
     <Box>
       <FormLabel>URL</FormLabel>
+
+      {application.applicationUrls.map((applicationUrl, index) => (
+        <ApplicationEditUrl
+          applicationUrl={applicationUrl}
+          onChanged={(applicationUrl) =>
+            setApplicationUrl(index, applicationUrl)
+          }
+        />
+      ))}
 
       {newApplicationUrls.map((applicationUrl, index) => (
         <ApplicationEditUrl
