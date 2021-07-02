@@ -53,6 +53,7 @@ export default function BoardCardAddButton(props: Props) {
       }
 
       onClose()
+      setName('')
       addTask(props.sheetId, response.data.task)
     },
     [sheets]
@@ -76,14 +77,17 @@ export default function BoardCardAddButton(props: Props) {
           <ModalHeader>タスクを追加</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <Select
-              value={applicationId}
-              onChange={(e) => setApplicationId(e.target.value)}
-            >
-              {applications.map((application) => (
-                <option value={application.id}>{application.name}</option>
-              ))}
-            </Select>
+            <FormControl mt={4}>
+              <FormLabel>アプリケーション</FormLabel>
+              <Select
+                value={applicationId}
+                onChange={(e) => setApplicationId(e.target.value)}
+              >
+                {applications.map((application) => (
+                  <option value={application.id}>{application.name}</option>
+                ))}
+              </Select>
+            </FormControl>
             <FormControl mt={4}>
               <FormLabel>タイトル</FormLabel>
               <Input
