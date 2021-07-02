@@ -38,7 +38,7 @@ const updateApplication = async (
       iconFileName: '',
       imageFileName: '',
       applicationUrls: { create: newApplicationUrls },
-    } as unknown as Application
+    }
 
     const application = await prisma.application.create({
       data,

@@ -26,6 +26,7 @@ const createTask = async (
   const task = await prisma.task.create({
     data: {
       sheetId: taskData.sheetId,
+      applicationId: taskData.applicationId,
       userId: user.id,
       name: taskData.name,
       body: taskData.body,

@@ -13,6 +13,7 @@ import {
   useDisclosure,
   Box,
   Icon,
+  Select,
 } from '@chakra-ui/react'
 import { Task } from '@prisma/client'
 import axios from 'axios'
@@ -32,13 +33,19 @@ export default function BoardCardAddButton(props: Props) {
   const initialRef = useRef()
   const [name, setName] = useState('')
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { sheets, addTask } = useBoard()
+  const {
+    sheets,
+    addTask,
+    applications,
+    applicationId: currentApplicationId,
+  } = useBoard()
+  const [applicationId, setApplicationId] = useState(currentApplicationId)
 
   const createTask = useCallback(
     async (name: string) => {
       const response = await axios
         .post<CreateTaskResponse>('/api/tasks/create', {
-          task: { sheetId: props.sheetId, name, body: '' },
+          task: { sheetId: props.sheetId, applicationId, name, body: '' },
         })
         .catch((_error) => null)
       if (!response) {
@@ -69,7 +76,15 @@ export default function BoardCardAddButton(props: Props) {
           <ModalHeader>タスクを追加</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
+            <Select
+              value={applicationId}
+              onChange={(e) => setApplicationId(e.target.value)}
+            >
+              {applications.map((application) => (
+                <option value={application.id}>{application.name}</option>
+              ))}
+            </Select>
+            <FormControl mt={4}>
               <FormLabel>タイトル</FormLabel>
               <Input
                 ref={initialRef}
