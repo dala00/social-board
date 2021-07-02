@@ -6,6 +6,7 @@ import ApplicationEditUrl from './ApplicationEditUrl'
 export default function ApplicationEditUrls() {
   const {
     application,
+    deleteApplicationUrl,
     deleteNewApplicationUrl,
     setApplicationUrl,
     newApplicationUrls,
@@ -18,19 +19,19 @@ export default function ApplicationEditUrls() {
       <FormLabel>URL</FormLabel>
 
       {application.applicationUrls.map((applicationUrl, index) => (
-        <Box my={4}>
+        <Box key={applicationUrl.id} my={4}>
           <ApplicationEditUrl
             applicationUrl={applicationUrl}
             onChanged={(applicationUrl) =>
               setApplicationUrl(index, applicationUrl)
             }
-            onDelete={() => {}}
+            onDelete={() => deleteApplicationUrl(applicationUrl.id)}
           />
         </Box>
       ))}
 
       {newApplicationUrls.map((applicationUrl, index) => (
-        <Box my={4}>
+        <Box key={index} my={4}>
           <ApplicationEditUrl
             applicationUrl={applicationUrl}
             onChanged={(applicationUrl) =>

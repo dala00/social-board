@@ -13,10 +13,25 @@ const newApplicationUrlsState = atom<ApplicationUrl[]>({
   default: [] as ApplicationUrl[],
 })
 
+const deletingApplicationUrlIdsState = atom<string[]>({
+  key: 'application/form/deletingApplicationUrlIds',
+  default: [] as string[],
+})
+
 export function useApplicationForm() {
   const [application, setApplication] = useRecoilState(applicationState)
   const [newApplicationUrls, setNewApplicationUrls] = useRecoilState(
     newApplicationUrlsState
+  )
+  const [deletingApplicationUrlIds, setDeletingApplicationUrlIds] =
+    useRecoilState(deletingApplicationUrlIdsState)
+
+  const initialize = useCallback(
+    ({ application }: { application: Application }) => {
+      setApplication(application)
+      setNewApplicationUrls([])
+    },
+    []
   )
 
   const addNewApplicationUrl = useCallback(() => {
@@ -70,10 +85,26 @@ export function useApplicationForm() {
     [application]
   )
 
+  const deleteApplicationUrl = useCallback(
+    (id: string) => {
+      setDeletingApplicationUrlIds([...deletingApplicationUrlIds, id])
+      setApplication({
+        ...application,
+        applicationUrls: application.applicationUrls.filter(
+          (applicationUrl) => applicationUrl.id !== id
+        ),
+      })
+    },
+    [application, deletingApplicationUrlIds]
+  )
+
   return {
     addNewApplicationUrl,
     application,
+    deleteApplicationUrl,
     deleteNewApplicationUrl,
+    deletingApplicationUrlIds,
+    initialize,
     newApplicationUrls,
     setApplication,
     setApplicationUrl,

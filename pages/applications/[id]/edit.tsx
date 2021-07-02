@@ -35,8 +35,13 @@ export default function ApplicationEditPage() {
   const router = useRouter()
   const { currentUser } = useAuthentication()
   const { id } = router.query as Query
-  const { application, setApplication, newApplicationUrls } =
-    useApplicationForm()
+  const {
+    initialize: initializeForm,
+    application,
+    setApplication,
+    newApplicationUrls,
+    deletingApplicationUrlIds,
+  } = useApplicationForm()
   const [loading, setLoading] = useState(true)
   const {
     url: iconImageUrl,
@@ -51,7 +56,7 @@ export default function ApplicationEditPage() {
     const response = await axios.get<GetApplicationResponseData>(
       `/api/applications/${id}/get-for-owner`
     )
-    setApplication(response.data.application)
+    initializeForm({ application: response.data.application })
     setLoading(false)
   }, [id])
 
@@ -78,6 +83,12 @@ export default function ApplicationEditPage() {
 
         form.append(`newApplicationUrls[${index}][name]`, applicationUrl.name)
         form.append(`newApplicationUrls[${index}][url]`, applicationUrl.url)
+      })
+      deletingApplicationUrlIds.forEach((deletingApplicationUrlId, index) => {
+        form.append(
+          `deleteApplicationUrlIds[${index}]`,
+          deletingApplicationUrlId
+        )
       })
       await axios.patch(`/api/applications/${id}/update`, form, {
         headers: {

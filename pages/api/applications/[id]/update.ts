@@ -14,6 +14,7 @@ export type UpdateApplicationRequestData = {
   description: string
   applicationUrls: ApplicationUrl[]
   newApplicationUrls: ApplicationUrl[]
+  deleteApplicationUrlIds: string[]
 }
 
 type Query = {
@@ -34,6 +35,7 @@ const updateApplication = async (
       description,
       applicationUrls,
       newApplicationUrls = [],
+      deleteApplicationUrlIds = [],
     } = req.body as UpdateApplicationRequestData
     const { id } = req.query as Query
     const user = await getUser(req)
@@ -48,12 +50,24 @@ const updateApplication = async (
       data.iconFileName = fileName
     }
 
-    await prisma.application.updateMany({
-      where: { id, userId: user.id },
-      data,
-    })
+    const updates = [
+      prisma.application.updateMany({
+        where: { id, userId: user.id },
+        data,
+      }),
+    ]
 
-    const updates = applicationUrls.map((applicationUrl) => {
+    if (deleteApplicationUrlIds.length > 0) {
+      updates.push(
+        prisma.applicationUrl.deleteMany({
+          where: {
+            id: { in: deleteApplicationUrlIds },
+          },
+        })
+      )
+    }
+
+    const applicationUrlsUpdates = applicationUrls.map((applicationUrl) => {
       const { name, url } = applicationUrl
       return prisma.applicationUrl.updateMany({
         where: { id: applicationUrl.id, applicationId: id },
@@ -63,7 +77,7 @@ const updateApplication = async (
         },
       })
     })
-    await Promise.all(updates)
+    await Promise.all([...updates, ...applicationUrlsUpdates])
 
     for (const applicationUrl of newApplicationUrls) {
       const { name, url } = applicationUrl
