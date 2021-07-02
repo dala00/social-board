@@ -31,6 +31,10 @@ export default function BoardTaskApplication() {
 
   const save = useCallback(async () => {
     setIsEditing(false)
+    if (applicationId === currentApplicationId) {
+      return
+    }
+
     await axios.patch(`/api/tasks/${taskId}/update-application`, {
       applicationId,
     })
