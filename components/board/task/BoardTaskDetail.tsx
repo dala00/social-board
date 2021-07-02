@@ -5,11 +5,13 @@ import React, { useCallback, useMemo } from 'react'
 import { useBoard } from '../../../hooks/board'
 import BoardApplications from '../BoardApplications'
 import BoardHeader from '../BoardHeader'
+import BoardTaskApplication from './BoardTaskApplication'
 import BoardTaskBody from './BoardTaskBody'
 import BoardTaskName from './BoardTaskName'
 
 export default function BoardTaskDetail() {
-  const { userId, applicationId, taskId, getTask } = useBoard()
+  const { userId, applicationId, getApplication, taskId, getTask } = useBoard()
+  const application = getApplication(applicationId)
   const task = useMemo(() => getTask(taskId), [taskId])
 
   if (!task) {
@@ -29,9 +31,12 @@ export default function BoardTaskDetail() {
         <Flex>
           <BoardApplications />
           <Box p={4} width="100%">
-            <Box mb={4}>
+            <Flex mb={4} justifyContent="space-between">
               <BoardTaskName />
-            </Box>
+              <Box>
+                <BoardTaskApplication key={task.id} />
+              </Box>
+            </Flex>
 
             <Divider borderColor={useColorModeValue('gray.700', 'gray.200')} />
 
