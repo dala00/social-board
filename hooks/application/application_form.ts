@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { atom, useRecoilState } from 'recoil'
 import { Application } from '../../models/Application'
 import { ApplicationUrl } from '../../models/ApplicationUrl'
+import { useFormImage } from '../form/image'
 
 const applicationState = atom<Application>({
   key: 'application/form/application',
@@ -25,6 +26,7 @@ export function useApplicationForm() {
   )
   const [deletingApplicationUrlIds, setDeletingApplicationUrlIds] =
     useRecoilState(deletingApplicationUrlIdsState)
+  const iconImage = useFormImage()
 
   const initialize = useCallback(
     ({ application }: { application: Application }) => {
@@ -104,6 +106,7 @@ export function useApplicationForm() {
     deleteApplicationUrl,
     deleteNewApplicationUrl,
     deletingApplicationUrlIds,
+    iconImage,
     initialize,
     newApplicationUrls,
     setApplication,

@@ -4,7 +4,6 @@ import {
   Center,
   FormControl,
   FormLabel,
-  Image,
   Input,
   Spinner,
   Textarea,
@@ -16,6 +15,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import ApplicationEditUrls from '../../../components/application/ApplicationEditUrls'
+import ApplicationForm from '../../../components/application/ApplicationForm'
 import FormImagePreview from '../../../components/form/FormImagePreview'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
@@ -38,16 +38,12 @@ export default function ApplicationEditPage() {
   const {
     initialize: initializeForm,
     application,
-    setApplication,
     newApplicationUrls,
+    iconImage,
     deletingApplicationUrlIds,
   } = useApplicationForm()
   const [loading, setLoading] = useState(true)
-  const {
-    url: iconImageUrl,
-    file: iconFile,
-    onChange: onIconImageChanged,
-  } = useFormImage()
+  const { url: iconImageUrl, file: iconFile } = iconImage
 
   const initialize = useCallback(async () => {
     if (!id) {
@@ -64,105 +60,39 @@ export default function ApplicationEditPage() {
     initialize()
   }, [id])
 
-  const save = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-      const form = new FormData()
-      form.append('name', application.name)
-      form.append('description', application.description)
-      form.append('icon', iconFile)
-      application.applicationUrls.forEach((applicationUrl, index) => {
-        form.append(`applicationUrls[${index}][id]`, applicationUrl.id)
-        form.append(`applicationUrls[${index}][name]`, applicationUrl.name)
-        form.append(`applicationUrls[${index}][url]`, applicationUrl.url)
-      })
-      newApplicationUrls.forEach((applicationUrl, index) => {
-        if (applicationUrl.url.trim() === '') {
-          return
-        }
+  const save = useCallback(async () => {
+    const form = new FormData()
+    form.append('name', application.name)
+    form.append('description', application.description)
+    form.append('icon', iconFile)
+    application.applicationUrls.forEach((applicationUrl, index) => {
+      form.append(`applicationUrls[${index}][id]`, applicationUrl.id)
+      form.append(`applicationUrls[${index}][name]`, applicationUrl.name)
+      form.append(`applicationUrls[${index}][url]`, applicationUrl.url)
+    })
+    newApplicationUrls.forEach((applicationUrl, index) => {
+      if (applicationUrl.url.trim() === '') {
+        return
+      }
 
-        form.append(`newApplicationUrls[${index}][name]`, applicationUrl.name)
-        form.append(`newApplicationUrls[${index}][url]`, applicationUrl.url)
-      })
-      deletingApplicationUrlIds.forEach((deletingApplicationUrlId, index) => {
-        form.append(
-          `deleteApplicationUrlIds[${index}]`,
-          deletingApplicationUrlId
-        )
-      })
-      await axios.patch(`/api/applications/${id}/update`, form, {
-        headers: {
-          'content-type': 'multipart/form-data',
-        },
-      })
-      toast.success('更新しました。')
-      router.push(`/board/${currentUser.uniqueId}/${id}`)
-    },
-    [application, iconImageUrl, iconFile, newApplicationUrls]
-  )
+      form.append(`newApplicationUrls[${index}][name]`, applicationUrl.name)
+      form.append(`newApplicationUrls[${index}][url]`, applicationUrl.url)
+    })
+    deletingApplicationUrlIds.forEach((deletingApplicationUrlId, index) => {
+      form.append(`deleteApplicationUrlIds[${index}]`, deletingApplicationUrlId)
+    })
+    await axios.patch(`/api/applications/${id}/update`, form, {
+      headers: {
+        'content-type': 'multipart/form-data',
+      },
+    })
+    toast.success('更新しました。')
+    router.push(`/board/${currentUser.uniqueId}/${id}`)
+  }, [application, iconImageUrl, iconFile, newApplicationUrls])
 
   return (
     <Layout>
-      {loading ? (
-        <Center>
-          <Spinner />
-        </Center>
-      ) : (
-        <form onSubmit={save}>
-          <FormControl id="name">
-            <FormLabel>アプリケーション名</FormLabel>
-            <Input
-              type="name"
-              value={application.name}
-              onChange={(e) =>
-                setApplication({ ...application, name: e.target.value })
-              }
-              required
-            />
-          </FormControl>
-          <FormControl id="description" mt={4}>
-            <FormLabel>説明</FormLabel>
-            <Textarea
-              width="100%"
-              rows={10}
-              value={application.description}
-              onChange={(e) =>
-                setApplication({ ...application, description: e.target.value })
-              }
-              required
-            />
-          </FormControl>
-          <FormControl id="image">
-            <FormLabel>アイコンファイル</FormLabel>
-            <Box>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={onIconImageChanged}
-              />
-            </Box>
-            <FormImagePreview
-              imageUrl={iconImageUrl}
-              currentImageUrl={
-                application.iconFileName === ''
-                  ? undefined
-                  : getIconUrl(application)
-              }
-              width={24}
-              height={24}
-              mt={2}
-            />
-          </FormControl>
-          <Box mt={4}>
-            <ApplicationEditUrls />
-          </Box>
-          <Box mt={4} textAlign="center">
-            <Button colorScheme="blue" type="submit" mt={2}>
-              更新する
-            </Button>
-          </Box>
-        </form>
-      )}
+      <ApplicationForm loading={loading} onSave={save} />
     </Layout>
   )
 }
