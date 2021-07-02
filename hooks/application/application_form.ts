@@ -40,6 +40,19 @@ export function useApplicationForm() {
     [newApplicationUrls]
   )
 
+  const deleteNewApplicationUrl = useCallback(
+    (index: number) => {
+      const newNewApplicationUrls: ApplicationUrl[] = []
+      newApplicationUrls.forEach((applicationUrl, currentIndex) => {
+        if (index !== currentIndex) {
+          newNewApplicationUrls.push(applicationUrl)
+        }
+      })
+      setNewApplicationUrls(newNewApplicationUrls)
+    },
+    [newApplicationUrls]
+  )
+
   const setApplicationUrl = useCallback(
     (index: number, applicationUrl: ApplicationUrl) => {
       setApplication({
@@ -60,6 +73,7 @@ export function useApplicationForm() {
   return {
     addNewApplicationUrl,
     application,
+    deleteNewApplicationUrl,
     newApplicationUrls,
     setApplication,
     setApplicationUrl,
