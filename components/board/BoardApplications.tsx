@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Box, Icon, Image } from '@chakra-ui/react'
 import { useBoard } from '../../hooks/board'
 import BoardApplication from './BoardApplication'
-import { MdClear } from 'react-icons/md'
+import { MdAdd, MdClear } from 'react-icons/md'
 import { getIconUrl } from '../../models/Application'
 
 export default function BoardApplications() {
@@ -34,6 +34,15 @@ export default function BoardApplications() {
           </Link>
         </Box>
       ))}
+      <Box m={2}>
+        <Link href={`/applications/create`}>
+          <a>
+            <BoardApplication>
+              <Icon as={MdAdd} />
+            </BoardApplication>
+          </a>
+        </Link>
+      </Box>
     </Box>
   )
 }

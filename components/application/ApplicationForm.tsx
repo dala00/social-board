@@ -17,6 +17,7 @@ import { getIconUrl } from '../../models/Application'
 type Props = {
   loading: boolean
   onSave: () => void
+  buttonLabel: string
 }
 
 export default function ApplicationForm(props: Props) {
@@ -104,7 +105,7 @@ export default function ApplicationForm(props: Props) {
           </Box>
           <Box mt={4} textAlign="center">
             <Button colorScheme="blue" type="submit" mt={2}>
-              更新する
+              {props.buttonLabel}
             </Button>
           </Box>
         </form>

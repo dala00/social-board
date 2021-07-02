@@ -6,6 +6,18 @@ export type Application = PrismaApplication & {
   applicationUrls: ApplicationUrl[]
 }
 
+export function createEmptyApplication(): Application {
+  return {
+    id: '',
+    userId: '',
+    name: '',
+    description: '',
+    iconFileName: '',
+    imageFileName: '',
+    applicationUrls: [],
+  }
+}
+
 export function getIconUrl(application: Application): string {
   if (application.iconFileName === '') {
     return ''

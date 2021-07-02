@@ -1,27 +1,14 @@
-import {
-  Box,
-  Button,
-  Center,
-  FormControl,
-  FormLabel,
-  Input,
-  Spinner,
-  Textarea,
-} from '@chakra-ui/react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
-import ApplicationEditUrls from '../../../components/application/ApplicationEditUrls'
 import ApplicationForm from '../../../components/application/ApplicationForm'
-import FormImagePreview from '../../../components/form/FormImagePreview'
 import Layout from '../../../components/layout/Layout'
 import { useApplicationForm } from '../../../hooks/application/application_form'
 import { useAuthentication } from '../../../hooks/authentication'
-import { useFormImage } from '../../../hooks/form/image'
-import { Application, getIconUrl } from '../../../models/Application'
+import { Application } from '../../../models/Application'
 
 type Query = {
   id: string
@@ -92,7 +79,7 @@ export default function ApplicationEditPage() {
 
   return (
     <Layout>
-      <ApplicationForm loading={loading} onSave={save} />
+      <ApplicationForm loading={loading} onSave={save} buttonLabel="更新する" />
     </Layout>
   )
 }

@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { atom, useRecoilState } from 'recoil'
-import { Application } from '../../models/Application'
+import { Application, createEmptyApplication } from '../../models/Application'
 import { ApplicationUrl } from '../../models/ApplicationUrl'
 import { useFormImage } from '../form/image'
 
 const applicationState = atom<Application>({
   key: 'application/form/application',
-  default: {} as Application,
+  default: createEmptyApplication(),
 })
 
 const newApplicationUrlsState = atom<ApplicationUrl[]>({
