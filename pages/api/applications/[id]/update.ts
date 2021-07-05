@@ -33,7 +33,7 @@ const updateApplication = async (
     const {
       name,
       description,
-      applicationUrls,
+      applicationUrls = [],
       newApplicationUrls = [],
       deleteApplicationUrlIds = [],
     } = req.body as UpdateApplicationRequestData
