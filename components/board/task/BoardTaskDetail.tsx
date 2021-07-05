@@ -1,4 +1,5 @@
-import { Box, Divider, Flex, useColorModeValue } from '@chakra-ui/react'
+import { Box, Button, Divider, Flex, useColorModeValue } from '@chakra-ui/react'
+import axios from 'axios'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useCallback, useMemo } from 'react'
@@ -10,9 +11,20 @@ import BoardTaskBody from './BoardTaskBody'
 import BoardTaskName from './BoardTaskName'
 
 export default function BoardTaskDetail() {
-  const { userId, applicationId, getApplication, taskId, getTask } = useBoard()
-  const application = getApplication(applicationId)
+  const router = useRouter()
+  const { applicationId, deleteTask, taskId, getTask, sheets, userId } =
+    useBoard()
   const task = useMemo(() => getTask(taskId), [taskId])
+
+  const archive = useCallback(async () => {
+    if (!confirm('アーカイブしてよろしいですか？')) {
+      return
+    }
+
+    await axios.patch(`/api/tasks/${taskId}/archive`)
+    deleteTask(taskId)
+    router.push(`/board/${userId}/${applicationId}`)
+  }, [sheets])
 
   if (!task) {
     return <></>
@@ -48,6 +60,11 @@ export default function BoardTaskDetail() {
               p={4}
             >
               <BoardTaskBody />
+            </Box>
+            <Box mt={8}>
+              <Button colorScheme="red" type="button" onClick={() => archive()}>
+                アーカイブ
+              </Button>
             </Box>
           </Box>
         </Flex>

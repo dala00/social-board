@@ -33,6 +33,8 @@ model Application {
   description     String
   iconFileName    String
   imageFileName   String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   user            User             @relation(fields: [userId], references: [id])
   applicationUrls ApplicationUrl[]
   sheets          Sheet[]
@@ -44,6 +46,8 @@ model ApplicationUrl {
   applicationId String
   name          String
   url           String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   application   Application @relation(fields: [applicationId], references: [id])
 }
 
@@ -64,6 +68,8 @@ model Sheet {
   applicationId String
   name          String
   displayOrder  Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   application   Application @relation(fields: [applicationId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
   tasks         Task[]
@@ -77,6 +83,9 @@ model Task {
   name          String
   body          String
   displayOrder  Int
+  archivedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   application   Application @relation(fields: [applicationId], references: [id])
   sheet         Sheet       @relation(fields: [sheetId], references: [id])
   user          User        @relation(fields: [userId], references: [id])

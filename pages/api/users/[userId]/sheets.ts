@@ -27,6 +27,9 @@ const sheetIndex = async (
     orderBy: { displayOrder: 'asc' },
     include: {
       tasks: {
+        where: {
+          archivedAt: null,
+        },
         orderBy: { displayOrder: 'asc' },
       },
     },

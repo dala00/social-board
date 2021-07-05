@@ -273,6 +273,18 @@ export function useBoard() {
     return swap(clonedSheets, overContainer, activeId, overId)
   }
 
+  const deleteTask = useCallback(
+    (deleteTaskId: string) => {
+      setSheets((sheets) =>
+        sheets.map((sheet) => ({
+          ...sheet,
+          tasks: sheet.tasks.filter((task) => task.id !== deleteTaskId),
+        }))
+      )
+    },
+    [sheets]
+  )
+
   return {
     addTask,
     applicationId,
@@ -280,6 +292,7 @@ export function useBoard() {
     clonedSheets,
     cloneSheets,
     convertToMultipleContainersItems,
+    deleteTask,
     getApplication,
     getSheet,
     getSortItemId,
