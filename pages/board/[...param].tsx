@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useCallback } from 'react'
 import Board from '../../components/board/Board'
 import BoardTaskDetail from '../../components/board/task/BoardTaskDetail'
@@ -9,6 +9,7 @@ import { UsersSheetsResponseData } from '../../types/api/users'
 export default function BoardPage() {
   const { setApplications, setSheets, taskId, applicationId, setUser, userId } =
     useBoard()
+  const [loading, setLoading] = useState(true)
 
   const initialize = useCallback(async () => {
     const response = await axios.get<UsersSheetsResponseData>(
@@ -17,6 +18,7 @@ export default function BoardPage() {
     setUser(response.data.user)
     setSheets(response.data.sheets)
     setApplications(response.data.applications)
+    setLoading(false)
   }, [userId])
 
   useEffect(() => {
@@ -25,6 +27,10 @@ export default function BoardPage() {
     }
     initialize()
   }, [userId, applicationId, taskId])
+
+  if (loading) {
+    return <></>
+  }
 
   if (taskId) {
     return <BoardTaskDetail />

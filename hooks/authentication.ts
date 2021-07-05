@@ -6,7 +6,7 @@ function getUser(session: Session, loading: boolean): User | undefined {
   if (loading) {
     return undefined
   }
-  if (!session.user) {
+  if (!session?.user) {
     return undefined
   }
 

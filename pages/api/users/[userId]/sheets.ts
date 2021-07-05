@@ -48,4 +48,4 @@ const sheetIndex = async (
   })
 }
 
-export default authenticated(method(sheetIndex, 'GET'))
+export default method(sheetIndex, 'GET')
