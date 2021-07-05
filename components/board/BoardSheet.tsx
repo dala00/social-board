@@ -12,11 +12,14 @@ type Props = {
   children: React.ReactNode
 }
 
+export const getBackgroundColor = () =>
+  useColorModeValue('gray.400', 'gray.500')
+
 export default function BoardSheet(props: Props) {
   return (
     <>
       <Box
-        backgroundColor={useColorModeValue('gray.400', 'gray.500')}
+        backgroundColor={getBackgroundColor()}
         borderRadius={8}
         mr={4}
         py={1}

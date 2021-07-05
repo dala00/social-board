@@ -19,7 +19,7 @@ type ResponseData = {
   application: Application
 }
 
-const updateApplication = async (
+const storeApplication = async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
@@ -73,4 +73,4 @@ export const config = {
   },
 }
 
-export default authenticated(method(updateApplication, 'POST'))
+export default authenticated(method(storeApplication, 'POST'))

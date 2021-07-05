@@ -1,20 +1,17 @@
 import { Box, Flex } from '@chakra-ui/layout'
 import axios from 'axios'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import BoardCard from './BoardCard'
 import BoardSheet from './BoardSheet'
 import { MultipleContainers } from '../sortable/MultipleContainers'
 import { useBoard } from '../../hooks/board'
-import { Sheet } from '../../models/Sheet'
 import styles from '../../styles/Board.module.css'
 import { MoveTaskRequestData } from '../../types/api/tasks'
-import { MdSettingsApplications } from 'react-icons/md'
-import { UsersSheetsResponseData } from '../../types/api/users'
 import BoardApplications from './BoardApplications'
 import { useColorModeValue } from '@chakra-ui/react'
 import BoardHeader from './BoardHeader'
+import BoardAddSheetButton from './BoardAddSheetButton'
 
 export default function Board() {
   const {
@@ -175,6 +172,7 @@ export default function Board() {
                   }}
                   onDragEnd={onDragEnd}
                 />
+                <BoardAddSheetButton />
               </Flex>
             </Box>
           </Flex>
