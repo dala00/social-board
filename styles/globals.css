@@ -7,3 +7,9 @@ div#__next > div {
   padding: 0;
   margin: 0;
 }
+
+.Toastify {
+  position: fixed;
+  left: 0;
+  right: 0;
+}

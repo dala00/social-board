@@ -13,6 +13,8 @@ import { useBoard } from '../../hooks/board'
 import { getIconUrl } from '../../models/Application'
 import ColorModeButton from '../layout/parts/ColorModeButton'
 
+export const boardHeaderHeight = 56
+
 export default function BoardHeader() {
   const { applicationId, getApplication, user } = useBoard()
   const { currentUser } = useAuthentication()
@@ -24,7 +26,7 @@ export default function BoardHeader() {
       justifyContent="space-between"
       background={useColorModeValue('gray.100', 'gray.700')}
       padding={4}
-      height={14}
+      height={boardHeaderHeight / 4}
     >
       <Flex alignItems="center">
         <Box>{user.name}</Box>

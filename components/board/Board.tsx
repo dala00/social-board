@@ -10,7 +10,7 @@ import styles from '../../styles/Board.module.css'
 import { MoveTaskRequestData } from '../../types/api/tasks'
 import BoardApplications from './BoardApplications'
 import { useColorModeValue } from '@chakra-ui/react'
-import BoardHeader from './BoardHeader'
+import BoardHeader, { boardHeaderHeight } from './BoardHeader'
 import BoardAddSheetButton from './BoardAddSheetButton'
 
 export default function Board() {
@@ -106,7 +106,11 @@ export default function Board() {
         {!taskId && (
           <Flex>
             <BoardApplications />
-            <Box width="100%">
+            <Box
+              width="100%"
+              height={`calc(100vh - ${boardHeaderHeight}px)`}
+              overflow="auto"
+            >
               <Flex p={4}>
                 <MultipleContainers
                   containerItems={sheets.map(
